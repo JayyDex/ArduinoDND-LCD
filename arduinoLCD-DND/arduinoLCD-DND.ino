@@ -17,7 +17,7 @@ int mux0array[16];
 int mux1array[16];
 int mux2array[16];
 
-int numberOfLCD = 1;
+int numberOfLCD = 2;
 
 void setup()
 {
@@ -29,7 +29,7 @@ void setup()
   pinMode(CONTROL3, OUTPUT);
 
   /** Setup Arduino **/
-  Serial.println("Initialising....");
+  Serial.print("Initialising.... ");
   for (int i=0; i<numberOfLCD; i++) {
     digitalWrite(CONTROL0, (i&15)>>3); 
     digitalWrite(CONTROL1, (i&7)>>2);  
@@ -39,8 +39,18 @@ void setup()
     lcd.begin(20, 4);
   }
 
-  Serial.println("Initialisation Complete");
+  Serial.print("Initialisation Complete\n\n");
+  infoPrint();
 } 
+
+void infoPrint() {
+  Serial.println("########## HOW TO USE ##########");
+  Serial.println("Msg Format: {senderlist}-{message}, example: 1,2,3,4,5-HelloWorld");
+  Serial.println("r-HelloWorld, 'r' Replay last msg sent");
+  Serial.println("a-HelloWorld, 'a' Send message to all LCD\n");
+
+  Serial.println("Awaiting input......");
+}
 
 void loop()
 {    
@@ -56,8 +66,17 @@ void loop()
     String cutMessage = getOwnerList(message);
     cutMessage.trim();
 
-    messageController(cutMessage);
-    lastMessage = message;
+    if (cutMessage == "") {
+      Serial.println("Invalid input, please use format {senderList}-{message}\n");
+      Serial.println("Awaiting input......");
+    } else {
+      Serial.println(message);
+      messageController(cutMessage);
+      lastMessage = message;
+      Serial.print('\n');
+      Serial.println("Awaiting input......");
+    }
+    emptyQueues();
   }
 }
 
@@ -71,7 +90,11 @@ void addRecipientToQueue(String recipeintList) {
   String recipient = recipeintList.substring(0, recipientIndex);
   String remainingRecipients = recipeintList.substring(recipientIndex+1);
   if (IsNumeric(recipient)) {
-    senderQueue.push(recipient);
+    if (recipient.toInt() < numberOfLCD) {
+      senderQueue.push(recipient);
+    } else {
+      Serial.println("Invalid LCD address " + String(recipient) + ", please enter value less than or equal to " + String(numberOfLCD));
+    }
   }
   if (remainingRecipients.length() > 0 && recipientIndex > 0) {
     addRecipientToQueue(remainingRecipients);
@@ -87,13 +110,23 @@ String getOwnerList(String message) {
   if (splitIndex < 0) {
     return "";
   }
+
   String recipientList = message.substring(0, splitIndex);
   String cutMessage = message.substring(splitIndex+1);
-  addRecipientToQueue(recipientList);
+
+  char specialCase = message.charAt(0);
+  if (specialCase == 'a') {
+    for(int p = 0; p < numberOfLCD; p++) {
+      senderQueue.push(String(p));
+    }
+  } else {
+    addRecipientToQueue(recipientList);
+  }
   return cutMessage;
 }
 
-int sendMessageToLCD(String message, String id, byte charCount) {
+byte sendMessageToLCD(String message, String id, byte charCount) {
+  //Serial.println("Input char: " + String(charCount));
   byte stillProcessing = 1;
   int lineNumber = 0;
   int lineCount = 0;
@@ -110,19 +143,26 @@ int sendMessageToLCD(String message, String id, byte charCount) {
       lineCount = 1;
     }
       
-    Serial.print(message[charCount - 1]);
-    //lcd.print(message[charCount - 1]);
+    //Serial.print(message[charCount - 1]);
+    lcd.print(message[charCount - 1]);
 
-    if (!message[charCount] || !(charCount % 80)) {
+    if (charCount % 80 == 0) {
+     // Serial.println(charCount);
+      //Serial.println("1st");
+      stillProcessing = 0;
+    }
+
+    if (!message[charCount]) {
+      //Serial.println("2nd");
       stillProcessing = 0;
     }
     charCount += 1;
   }
-  Serial.println("");
+  //Serial.println("Inside: " + String(charCount));
   return charCount;
 }
 
-int manySend(String message, byte charCount) {
+byte manySend(String message, byte charCount) {
   byte globalCharCount;
   
   while(!senderQueue.isEmpty()) {
@@ -131,21 +171,26 @@ int manySend(String message, byte charCount) {
     setMux(recipient.toInt());
     globalCharCount = sendMessageToLCD(message, recipient, charCount);
   }
+  //Serial.println("Pos:" + String(globalCharCount));
   return globalCharCount;
 }
 
 void messageController(String message) {
   onAllLCD();
-
+  if (senderQueue.isEmpty()) {
+    return;
+  }
+  
   byte charCount = 1;
-
+  Serial.print("Sending msg...");
+  //Serial.println(message.length());
   while (charCount < message.length() + 1) {
     charCount = manySend(message, charCount);
-    Serial.println(charCount);
     delay(5000);
     recovery();
   }
-
+  Serial.print(" - Message Sent!!\n");
+  emptyQueues();
   offAllLCD();
 }
 
@@ -156,6 +201,15 @@ void recovery() {
   }
 }
 
+void emptyQueues() {
+  while(!backupQueue.isEmpty()) {
+    backupQueue.pop();
+  }
+  while(!senderQueue.isEmpty()) {
+    senderQueue.pop();
+  }
+}
+
 void prepareLCD() {
   for(int i = 0; i < numberOfLCD; i++) {
     setMux(i);
@@ -163,43 +217,6 @@ void prepareLCD() {
     lcd.setCursor(0,0);
   }
 }
-
-//void sendToManyLCD(String message) {
-//  onAllLCD();
-//  while(!senderQueue.isEmpty()) {
-//    String recipient = senderQueue.pop();
-//    setMux(recipient.toInt());
-//
-//    byte stillProcessing = 1;
-//    byte charCount = 1;
-//    int lineNumber = 0;
-//    int lineCount = 0;
-//
-//    lcd.clear();
-//    lcd.setCursor(0,0);
-//
-//    Serial.print("Owner " + recipient);
-//    while(stillProcessing) {
-//      lcd.backlight();
-//      if (++lineCount > 20) {
-//        lineNumber += 1;
-//        lcd.setCursor(0,lineNumber);
-//        lineCount = 1;
-//      }
-//      
-//      Serial.print(message[charCount - 1]);
-//      //lcd.print(message[charCount - 1]);
-//      delay(10);
-//
-//      if (!message[charCount]) {
-//        stillProcessing = 0;
-//      }
-//      charCount += 1;
-//    }
-//  }
-//  delay(3000);
-//  offAllLCD();
-//}
 
 void offAllLCD() {
   for(int i = 0; i < numberOfLCD; i++) {
