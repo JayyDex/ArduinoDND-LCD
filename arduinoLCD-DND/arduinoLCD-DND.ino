@@ -1,3 +1,4 @@
+#include <StringSplitter.h>
 #include <LiquidCrystal_I2C.h>
 #include <QueueList.h>
 #include <Wire.h> 
@@ -12,12 +13,13 @@ LiquidCrystal_I2C lcd(0x38,20,4);
 QueueList <String> senderQueue;
 QueueList <String> backupQueue;
 String lastMessage;
+StringSplitter *splitter;
 
 int mux0array[16];
 int mux1array[16];
 int mux2array[16];
 
-int numberOfLCD = 2;
+int numberOfLCD = 10;
 
 void setup()
 {
@@ -66,17 +68,21 @@ void loop()
     String cutMessage = getOwnerList(message);
     cutMessage.trim();
 
-    if (cutMessage == "") {
-      Serial.println("Invalid input, please use format {senderList}-{message}\n");
-      Serial.println("Awaiting input......");
-    } else {
-      Serial.println(message);
-      messageController(cutMessage);
-      lastMessage = message;
-      Serial.print('\n');
-      Serial.println("Awaiting input......");
-    }
+    Serial.println(cutMessage);
+
+//    if (cutMessage == "") {
+//      Serial.println("Invalid input, please use format {senderList}-{message}\n");
+//      Serial.println("Awaiting input......");
+//    } else {
+//      Serial.println(message);
+//      messageController(cutMessage);
+//      lastMessage = message;
+//      Serial.print('\n');
+//      Serial.println("Awaiting input......");
+//    }
     emptyQueues();
+    delete splitter;
+    splitter = NULL;
   }
 }
 
@@ -106,13 +112,20 @@ void addRecipientToQueue(String recipeintList) {
  * on unique identifier "-"
  */
 String getOwnerList(String message) {
-  int splitIndex = message.indexOf('-');
-  if (splitIndex < 0) {
+  splitter = new StringSplitter(message, '-', 2);
+  String item = splitter->getItemAtIndex(1);
+
+  if (!splitter) {
     return "";
   }
+  
+//  int splitIndex = message.indexOf('-');
+//  if (splitIndex < 0) {
+//    return "";
+//  }
 
-  String recipientList = message.substring(0, splitIndex);
-  String cutMessage = message.substring(splitIndex+1);
+  String recipientList = splitter->getItemAtIndex(0);
+  String cutMessage = splitter->getItemAtIndex(1);
 
   char specialCase = message.charAt(0);
   if (specialCase == 'a') {
@@ -126,8 +139,8 @@ String getOwnerList(String message) {
 }
 
 byte sendMessageToLCD(String message, String id, byte charCount) {
-  char charBuf[message.length()+1];
-  message.toCharArray(charBuf, message.length()+1);
+//  char charBuf[message.length()+1];
+//  message.toCharArray(charBuf, message.length()+1);
   
   //Serial.println("Input char: " + String(charCount));
   byte stillProcessing = 1;
@@ -146,8 +159,8 @@ byte sendMessageToLCD(String message, String id, byte charCount) {
       lineCount = 1;
     }
       
-    Serial.print(message[charCount - 1]);
-    //lcd.print(charBuf[charCount - 1]);
+    //Serial.print(message[charCount - 1]);
+    lcd.print(message[charCount - 1]);
 
     if (charCount % 80 == 0) {
      // Serial.println(charCount);
@@ -155,7 +168,9 @@ byte sendMessageToLCD(String message, String id, byte charCount) {
       stillProcessing = 0;
     }
 
-    if (!charBuf[charCount]) {
+    if (!message[charCount]) {
+      //Serial.println("Error is happening with this char");
+      //Serial.println(message[charCount]);
       //Serial.println("2nd");
       stillProcessing = 0;
       return -1;
