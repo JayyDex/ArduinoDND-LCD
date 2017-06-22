@@ -70,16 +70,16 @@ void loop()
 
     Serial.println(cutMessage);
 
-//    if (cutMessage == "") {
-//      Serial.println("Invalid input, please use format {senderList}-{message}\n");
-//      Serial.println("Awaiting input......");
-//    } else {
-//      Serial.println(message);
-//      messageController(cutMessage);
-//      lastMessage = message;
-//      Serial.print('\n');
-//      Serial.println("Awaiting input......");
-//    }
+    if (cutMessage == "") {
+      Serial.println("Invalid input, please use format {senderList}-{message}\n");
+      Serial.println("Awaiting input......");
+    } else {
+      Serial.println(message);
+      messageController(cutMessage);
+      lastMessage = message;
+      Serial.print('\n');
+      Serial.println("Awaiting input......");
+    }
     emptyQueues();
     delete splitter;
     splitter = NULL;
@@ -194,25 +194,44 @@ byte manySend(String message, byte charCount) {
   return globalCharCount;
 }
 
+void callFunction(String message, uint8_t lineCount, uint8_t x) {
+  
+}
+
 void messageController(String message) {
   onAllLCD();
   if (senderQueue.isEmpty()) {
     return;
   }
+
+  //0,1,2,3,4
+
+  //Go through 0-4 (Send 1st line)
+  //Do again (0-4) send 2nd line
+
+  uint8_t x = 0;
+  uint8_t lineCount;
+
+  while(!senderQueue.isEmpty()) {
+    String recipient = senderQueue.pop();
+    setMux(recipient.toInt());
+    lineCount = scrolling_text(message, x);
+  }
+  delay(3000);
   
-  byte charCount = 1;
-  Serial.print("Sending msg...");
-  //Serial.println(message.length());
-  while (charCount < message.length() + 1) {
-    charCount = manySend(message, charCount);
-    delay(5000);
-    recovery();
-  }
-  if (charCount == -1) {
-    Serial.print("ERR: Please don't copy/paste\n");
-  } else {
-    Serial.print(" - Message Sent!!\n");
-  }
+//  byte charCount = 1;
+//  Serial.print("Sending msg...");
+//  //Serial.println(message.length());
+//  while (charCount < message.length() + 1) {
+//    charCount = manySend(message, charCount);
+//    delay(5000);
+//    recovery();
+//  }
+//  if (charCount == -1) {
+//    Serial.print("ERR: Please don't copy/paste\n");
+//  } else {
+//    Serial.print(" - Message Sent!!\n");
+//  }
   emptyQueues();
   offAllLCD();
 }
@@ -285,4 +304,27 @@ boolean IsNumeric(String str) {
         return false;
     }
     return true;
+}
+
+uint8_t scrolling_text(String msg, uint8_t x) {
+  lcd.backlight();
+  uint8_t lineNumber = x;
+  uint8_t lineCount = msg.length()/20; // 20 chars per line
+  
+    do {
+      lcd.setCursor(0,0);
+      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      lcd.setCursor(0,1);
+      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      lcd.setCursor(0,2);
+      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      lcd.setCursor(0,3);
+      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      lineNumber += 1;
+    } while(lineCount - lineNumber >= 4);
+    return lineCount;
 }
