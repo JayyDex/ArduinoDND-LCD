@@ -126,6 +126,9 @@ String getOwnerList(String message) {
 }
 
 byte sendMessageToLCD(String message, String id, byte charCount) {
+  char charBuf[message.length()+1];
+  message.toCharArray(charBuf, message.length()+1);
+  
   //Serial.println("Input char: " + String(charCount));
   byte stillProcessing = 1;
   int lineNumber = 0;
@@ -143,8 +146,8 @@ byte sendMessageToLCD(String message, String id, byte charCount) {
       lineCount = 1;
     }
       
-    //Serial.print(message[charCount - 1]);
-    lcd.print(message[charCount - 1]);
+    Serial.print(message[charCount - 1]);
+    //lcd.print(charBuf[charCount - 1]);
 
     if (charCount % 80 == 0) {
      // Serial.println(charCount);
@@ -152,13 +155,14 @@ byte sendMessageToLCD(String message, String id, byte charCount) {
       stillProcessing = 0;
     }
 
-    if (!message[charCount]) {
+    if (!charBuf[charCount]) {
       //Serial.println("2nd");
       stillProcessing = 0;
+      return -1;
     }
     charCount += 1;
   }
-  //Serial.println("Inside: " + String(charCount));
+  Serial.println("");
   return charCount;
 }
 
@@ -189,7 +193,11 @@ void messageController(String message) {
     delay(5000);
     recovery();
   }
-  Serial.print(" - Message Sent!!\n");
+  if (charCount == -1) {
+    Serial.print("ERR: Please don't copy/paste\n");
+  } else {
+    Serial.print(" - Message Sent!!\n");
+  }
   emptyQueues();
   offAllLCD();
 }
