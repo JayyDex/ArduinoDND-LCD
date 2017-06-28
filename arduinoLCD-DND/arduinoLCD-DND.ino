@@ -21,7 +21,7 @@ int mux0array[16];
 int mux1array[16];
 int mux2array[16];
 
-int numberOfLCD = 10;
+int numberOfLCD = 2;
 
 void setup()
 {
@@ -36,14 +36,14 @@ void setup()
 
   /** Setup Arduino **/
   Serial.print("Initialising.... ");
-//  for (int i=0; i<numberOfLCD; i++) {
-//    digitalWrite(CONTROL0, (i&15)>>3); 
-//    digitalWrite(CONTROL1, (i&7)>>2);  
-//    digitalWrite(CONTROL2, (i&3)>>1);  
-//    digitalWrite(CONTROL3, (i&1));
-//    lcd.init();
-//    lcd.begin(20, 4);
-//  }
+  for (int i=0; i<numberOfLCD; i++) {
+    digitalWrite(CONTROL0, (i&15)>>3); 
+    digitalWrite(CONTROL1, (i&7)>>2);  
+    digitalWrite(CONTROL2, (i&3)>>1);  
+    digitalWrite(CONTROL3, (i&1));
+    lcd.init();
+    lcd.begin(20, 4);
+  }
 
   Serial.print("Initialisation Complete\n\n");
   infoPrint();
@@ -55,7 +55,7 @@ void infoPrint() {
   Serial.println("r-HelloWorld, 'r' Replay last msg sent");
   Serial.println("a-HelloWorld, 'a' Send message to all LCD\n");
 
-  Serial.println("Awaiting input......");
+  Serial.println("### Awaiting input ###");
 }
 
 void loop()
@@ -66,57 +66,45 @@ void loop()
       Serial.println("Repeating Message....");
       strncpy(receivedMessage, lastMessage, strlen(lastMessage));
     }
-
     int index = getOwnerList(receivedMessage);
-    
     char subbuff[numChars];
     strncpy(subbuff, receivedMessage+(index+1), numChars-1);
     subbuff[numChars] = '\0';
-
-    Serial.print("Input: ");
-    Serial.println(receivedMessage);
-    
     trim(subbuff);
-    Serial.print("Msg: ");
-    Serial.println(subbuff);
-    
 
-    strncpy(lastMessage, receivedMessage, strlen(receivedMessage));
-    memset(&receivedMessage[0], 0, sizeof(receivedMessage));
+    if(subbuff[0] && index != 0 && senderQueue.count() != 0) {
+      Serial.print("Input: ");
+      Serial.println(receivedMessage);
+      Serial.print("Msg: ");
+      Serial.println(subbuff);
+      Serial.print("Sending to this many people: ");
+      Serial.println(senderQueue.count());
 
-    Serial.println(senderQueue.count());
+      messageController(subbuff);
+      
+      strncpy(lastMessage, receivedMessage, strlen(receivedMessage));
+      memset(&receivedMessage[0], 0, sizeof(receivedMessage));
+    } else {
+      Serial.println("Invalid MSG Input!!");
+      Serial.println("Use Msg Format: {senderlist}-{message}, example: 1,2,3,4,5-HelloWorld");
+    }
+
     emptyQueues();
     newData = false;
+    Serial.println("\n### Awaiting input ###");
   }
+}
+
+void messageController(char* message) {
+  onAllLCD();
+
+  String parseMsg = String(message);
+  Serial.print("Controller: ");
+  Serial.println(parseMsg);
   
-//  if (Serial.available() > 0) {
-//    String message = Serial.readString();
-//    String copy = message.substring(0);
-//    
-//    char specialCase = copy.charAt(0);
-//    if (specialCase == 'r') {
-//      Serial.println("Repeat msg");
-//      message = lastMessage;
-//    }
-//    String cutMessage = getOwnerList(message);
-//    cutMessage.trim();
-//
-//    Serial.println("RAW: " + cutMessage);
-//
-//    if (cutMessage == "") {
-//      Serial.println("Invalid input, please use format {senderList}-{message}\n");
-//      Serial.println("Awaiting input......");
-//    } else {
-//      Serial.println(message);
-//      messageController(cutMessage);
-//      lastMessage = message;
-//      Serial.print('\n');
-//      Serial.println("Awaiting input......");
-//    }
-//    emptyQueues();
-//    delete splitter;
-//    splitter = NULL;
-//  }
+  scrolling_text(message);
+  
+  offAllLCD();
 }
 
 /**
@@ -129,16 +117,12 @@ int getOwnerList(char* message) {
   if(ptr) {
     index = ptr - message;
   }
-
   char subbuff[numChars];
   memset(&subbuff[0], 0, sizeof(subbuff));
   strncpy(subbuff, message, index);
   subbuff[numChars] = '\0';
   trim(subbuff);
-  
   String recipeintList = String(subbuff);
-
-  //Recursive code
   if (message[0] == 'a') {
     for(int p = 0; p < numberOfLCD; p++) {
       senderQueue.push(p);
@@ -146,10 +130,8 @@ int getOwnerList(char* message) {
   } else {
     /** Add People to send msg to queue**/
     recipeintList.trim();
-    Serial.println("Receipt: " + recipeintList);
-
+//    Serial.println("Receipt: " + recipeintList);
     String remainingRecipients = recipeintList;
-
     while(remainingRecipients.length() > 0) {
       int recipientIndex = remainingRecipients.indexOf(',');
       if (recipientIndex == -1) {
@@ -162,87 +144,8 @@ int getOwnerList(char* message) {
       }
     }
   }
-  Serial.println("End of recipient adding");
+//  Serial.println("End of recipient adding");
   return index;
-}
-
-byte sendMessageToLCD(String message, String id, byte charCount) {
-//  char charBuf[message.length()+1];
-//  message.toCharArray(charBuf, message.length()+1);
-  
-  //Serial.println("Input char: " + String(charCount));
-  byte stillProcessing = 1;
-  int lineNumber = 0;
-  int lineCount = 0;
-
-  lcd.clear();
-  lcd.setCursor(0,0);
-
-  Serial.print(id + ":");
-  while(stillProcessing) {
-    lcd.backlight();
-    if (++lineCount > 20) {
-      lineNumber += 1;
-      lcd.setCursor(0,lineNumber);
-      lineCount = 1;
-    }
-      
-    //Serial.print(message[charCount - 1]);
-    lcd.print(message[charCount - 1]);
-
-    if (charCount % 80 == 0) {
-     // Serial.println(charCount);
-      //Serial.println("1st");
-      stillProcessing = 0;
-    }
-
-    if (!message[charCount]) {
-      //Serial.println("Error is happening with this char");
-      //Serial.println(message[charCount]);
-      //Serial.println("2nd");
-      stillProcessing = 0;
-      return -1;
-    }
-    charCount += 1;
-  }
-  Serial.println("");
-  return charCount;
-}
-
-byte manySend(String message, byte charCount) {
-  byte globalCharCount;
-  
-  while(!senderQueue.isEmpty()) {
-    int recipient = senderQueue.pop();
-    backupQueue.push(recipient);
-    setMux(recipient);
-    globalCharCount = sendMessageToLCD(message, String(recipient), charCount);
-  }
-  //Serial.println("Pos:" + String(globalCharCount));
-  return globalCharCount;
-}
-
-void messageController(String message) {
-  onAllLCD();
-  if (senderQueue.isEmpty()) {
-    return;
-  }
-  
-  byte charCount = 1;
-  Serial.print("Sending msg...");
-  //Serial.println(message.length());
-  while (charCount < message.length() + 1) {
-    charCount = manySend(message, charCount);
-    delay(5000);
-    recovery();
-  }
-  if (charCount == -1) {
-    Serial.print("ERR: Please don't copy/paste\n");
-  } else {
-    Serial.print(" - Message Sent!!\n");
-  }
-  emptyQueues();
-  offAllLCD();
 }
 
 void recovery() {
@@ -357,25 +260,23 @@ void trim(char *str)
     str[i - begin] = '\0'; // Null terminate string.
 }
 
-//void scrolling_text(String msg) {
-//  uint8_t lineNumber = 0;
-//  uint8_t lineCount = msg.length()/20; // 20 chars per line
-//  
-//    do {
-//      lcd.setCursor(0,0);
-//      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      lcd.setCursor(0,1);
-//      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      lcd.setCursor(0,2);
-//      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      lcd.setCursor(0,3);
-//      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      lineNumber += 1;
-//      delay(3000);
-//      lcd.clear();
-//    } while(lineCount - lineNumber >= 4);
-//}
+void scrolling_text(String msg) {
+  uint8_t lineNumber = 0;
+  uint8_t lineCount = msg.length()/20; // 20 chars per line
+  
+    do {
+      lcd.setCursor(0,0);
+      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      lcd.setCursor(0,1);
+      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      lcd.setCursor(0,2);
+      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      lcd.setCursor(0,3);
+      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      lineNumber += 1;
+    } while(lineCount - lineNumber >= 4);
+}
