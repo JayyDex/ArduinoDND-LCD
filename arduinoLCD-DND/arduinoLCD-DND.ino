@@ -77,18 +77,17 @@ void loop()
       Serial.println(receivedMessage);
       Serial.print("Msg: ");
       Serial.println(subbuff);
-      //Serial.print("Sending to this many people: ");
-      //Serial.println(senderQueue.count());
-
       messageController(subbuff);
-      
-      strncpy(lastMessage, receivedMessage, strlen(receivedMessage));
-      memset(&receivedMessage[0], 0, sizeof(receivedMessage));
     } else {
+      Serial.print("Input: ");
+      Serial.println(receivedMessage);
       Serial.println("Invalid MSG Input!!");
       Serial.println("Use Msg Format: {senderlist}-{message}, example: 1,2,3,4,5-HelloWorld");
     }
 
+    strncpy(lastMessage, receivedMessage, strlen(receivedMessage));
+    memset(&receivedMessage[0], 0, sizeof(receivedMessage));
+    
     emptyQueues();
     newData = false;
     Serial.println("\n### Awaiting input ###");
@@ -97,22 +96,13 @@ void loop()
 
 void messageController(char* message) {
   onAllLCD();
-
   String msg = String(message);
   msg.trim();
-  //Serial.print("Controller: ");
-  //Serial.println(msg);
-
   int lineNumber = 0;
-  //int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
-  int lineCount = msg.length()/20;
-
-  // Declaration
+  int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
   int* myArray = 0;
   int myArraySize = senderQueue.count();
   
-  // Allocation (let's suppose size contains some value discovered at runtime,
-  // e.g. obtained from some external source)
   if (myArray != 0) {
       myArray = (int*) realloc(myArray, myArraySize * sizeof(int));
   } else {
@@ -126,71 +116,50 @@ void messageController(char* message) {
   do {
     for(int g = 0; g < myArraySize; g++) {
       setMux(myArray[g]);
-      //Serial.print("ID: ");
-      //Serial.println(myArray[g]);
+      Serial.print("ID: ");
+      Serial.println(myArray[g]);
       
       lcd.setCursor(0,0);
       lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-      //Serial.print("#1 :");
-      //Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      Serial.print("#1 :");
+      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
       
       lcd.setCursor(0,1);
       lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-      //Serial.print("#2 :");
-      //Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      Serial.print("#2 :");
+      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
       
       lcd.setCursor(0,2);
       lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-      //Serial.print("#3 :");
-      //Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      Serial.print("#3 :");
+      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
       
       lcd.setCursor(0,3);
       lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-      //Serial.print("#4 :");
-      //Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      Serial.print("#4 :");
+      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+
+      //Add if statement to fix last line problem
     }
     
-    //Serial.println(lineCount);
-    //Serial.println(lineNumber);
-    //Serial.println("X set sent");
+    Serial.println(lineCount);
+    Serial.println(lineNumber);
+    Serial.println("X set sent");
     if(lineCount < 4) {
       delay(4000);
-    } else {
+    } 
+    else if(lineCount - lineNumber == 5) {
+      delay(4000);
+    }
+    else {
       delay(1000);
     }
+    
     lineNumber += 1;
   } while(lineCount - lineNumber >= 4);
 
-//  do {
-//    lcd.setCursor(0,0);
-//      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      lcd.setCursor(0,1);
-//      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      lcd.setCursor(0,2);
-//      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      lcd.setCursor(0,3);
-//      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      lineNumber += 1;
-//  } while(lineCount - lineNumber >= 4)
-
-//
-//  do {
-//    
-//  } while();
-
   free(myArray);
   offAllLCD();
-}
-
-/**
- * Returns an int, indicating which line it's currently up to
- */
-int scrollingText(String msg) {
-  
 }
 
 /**
@@ -335,24 +304,3 @@ void trim(char *str)
 
     str[i - begin] = '\0'; // Null terminate string.
 }
-
-//void scrolling_text(String msg) {
-//  uint8_t lineNumber = 0;
-//  uint8_t lineCount = msg.length()/20; // 20 chars per line
-//  
-//    do {
-//      lcd.setCursor(0,0);
-//      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
-//      lcd.setCursor(0,1);
-//      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-//      lcd.setCursor(0,2);
-//      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-//      lcd.setCursor(0,3);
-//      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-//      lineNumber += 1;
-//    } while(lineCount - lineNumber >= 4);
-//}
