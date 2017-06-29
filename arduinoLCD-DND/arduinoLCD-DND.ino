@@ -1,6 +1,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <QueueList.h>
 #include <Wire.h> 
+#include <math.h>
 
 #define CONTROL0 5    
 #define CONTROL1 4
@@ -98,13 +99,50 @@ void loop()
 void messageController(char* message) {
   onAllLCD();
 
-  String parseMsg = String(message);
+  String msg = String(message);
   Serial.print("Controller: ");
-  Serial.println(parseMsg);
+  Serial.println(msg);
+
+  uint8_t lineNumber = 0;
+  int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
+
+  // Declaration
+  int* myArray = 0;
+  int myArraySize = senderQueue.count();
   
-  scrolling_text(message);
+  // Allocation (let's suppose size contains some value discovered at runtime,
+  // e.g. obtained from some external source)
+  if (myArray != 0) {
+      myArray = (int*) realloc(myArray, myArraySize * sizeof(int));
+  } else {
+      myArray = (int*) malloc(myArraySize * sizeof(int));
+  }
+
+  for(int p = 0; p < myArraySize; p++) {
+    myArray[p] = senderQueue.pop();
+  }
+
+  for(int g = 0; g < myArraySize; g++) {
+    Serial.print("ID: ");
+    Serial.println(myArray[g]);
+  }
+
+//
+//  do {
+//    
+//  } while();
+
   
+  scrollingText(msg);
+  free(myArray);
   offAllLCD();
+}
+
+/**
+ * Returns an int, indicating which line it's currently up to
+ */
+int scrollingText(String msg) {
+  
 }
 
 /**
@@ -260,23 +298,23 @@ void trim(char *str)
     str[i - begin] = '\0'; // Null terminate string.
 }
 
-void scrolling_text(String msg) {
-  uint8_t lineNumber = 0;
-  uint8_t lineCount = msg.length()/20; // 20 chars per line
-  
-    do {
-      lcd.setCursor(0,0);
-      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
-      lcd.setCursor(0,1);
-      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-      lcd.setCursor(0,2);
-      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-      lcd.setCursor(0,3);
-      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-      lineNumber += 1;
-    } while(lineCount - lineNumber >= 4);
-}
+//void scrolling_text(String msg) {
+//  uint8_t lineNumber = 0;
+//  uint8_t lineCount = msg.length()/20; // 20 chars per line
+//  
+//    do {
+//      lcd.setCursor(0,0);
+//      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+//      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+//      lcd.setCursor(0,1);
+//      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+//      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+//      lcd.setCursor(0,2);
+//      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+//      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+//      lcd.setCursor(0,3);
+//      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+//      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+//      lineNumber += 1;
+//    } while(lineCount - lineNumber >= 4);
+//}
