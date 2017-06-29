@@ -21,20 +21,20 @@ int mux0array[16];
 int mux1array[16];
 int mux2array[16];
 
-int numberOfLCD = 2;
+int numberOfLCD = 10;
 
 void setup()
 {
   memset(&receivedMessage[0], 0, sizeof(receivedMessage));
   memset(&lastMessage[0], 0, sizeof(lastMessage));
   Serial.begin(9600);
-  /** Setup MUX Control Pins **/
+  /* Setup MUX Control Pins */
   pinMode(CONTROL0, OUTPUT);
   pinMode(CONTROL1, OUTPUT);
   pinMode(CONTROL2, OUTPUT);
   pinMode(CONTROL3, OUTPUT);
 
-  /** Setup Arduino **/
+  /* Setup Arduino */
   Serial.print("Initialising.... ");
   for (int i=0; i<numberOfLCD; i++) {
     digitalWrite(CONTROL0, (i&15)>>3); 
@@ -77,8 +77,8 @@ void loop()
       Serial.println(receivedMessage);
       Serial.print("Msg: ");
       Serial.println(subbuff);
-      Serial.print("Sending to this many people: ");
-      Serial.println(senderQueue.count());
+      //Serial.print("Sending to this many people: ");
+      //Serial.println(senderQueue.count());
 
       messageController(subbuff);
       
@@ -100,11 +100,12 @@ void messageController(char* message) {
 
   String msg = String(message);
   msg.trim();
-  Serial.print("Controller: ");
-  Serial.println(msg);
+  //Serial.print("Controller: ");
+  //Serial.println(msg);
 
   int lineNumber = 0;
-  int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
+  //int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
+  int lineCount = msg.length()/20;
 
   // Declaration
   int* myArray = 0;
@@ -125,34 +126,38 @@ void messageController(char* message) {
   do {
     for(int g = 0; g < myArraySize; g++) {
       setMux(myArray[g]);
-      Serial.print("ID: ");
-      Serial.println(myArray[g]);
+      //Serial.print("ID: ");
+      //Serial.println(myArray[g]);
       
       lcd.setCursor(0,0);
       lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-      Serial.print("#1 :");
-      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      //Serial.print("#1 :");
+      //Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
       
       lcd.setCursor(0,1);
       lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-      Serial.print("#2 :");
-      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      //Serial.print("#2 :");
+      //Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
       
       lcd.setCursor(0,2);
       lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-      Serial.print("#3 :");
-      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      //Serial.print("#3 :");
+      //Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
       
       lcd.setCursor(0,3);
       lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-      Serial.print("#4 :");
-      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      //Serial.print("#4 :");
+      //Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
     }
     
-    Serial.println(lineCount);
-    Serial.println(lineNumber);
-    Serial.println("X set sent");
-    delay(5000);
+    //Serial.println(lineCount);
+    //Serial.println(lineNumber);
+    //Serial.println("X set sent");
+    if(lineCount < 4) {
+      delay(4000);
+    } else {
+      delay(1000);
+    }
     lineNumber += 1;
   } while(lineCount - lineNumber >= 4);
 
@@ -209,7 +214,7 @@ int getOwnerList(char* message) {
       senderQueue.push(p);
     }
   } else {
-    /** Add People to send msg to queue**/
+    /* Add People to send msg to queue*/
     recipeintList.trim();
 //    Serial.println("Receipt: " + recipeintList);
     String remainingRecipients = recipeintList;
