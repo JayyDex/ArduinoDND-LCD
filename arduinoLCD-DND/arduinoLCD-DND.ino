@@ -11,7 +11,6 @@
 LiquidCrystal_I2C lcd(0x38,20,4);
 
 QueueList <int> senderQueue;
-QueueList <int> backupQueue;
 
 const word numChars = 255;
 char receivedMessage[numChars];
@@ -100,10 +99,11 @@ void messageController(char* message) {
   onAllLCD();
 
   String msg = String(message);
+  msg.trim();
   Serial.print("Controller: ");
   Serial.println(msg);
 
-  uint8_t lineNumber = 0;
+  int lineNumber = 0;
   int lineCount = ceil((double)msg.length()/20.0); // 20 chars per line
 
   // Declaration
@@ -122,18 +122,61 @@ void messageController(char* message) {
     myArray[p] = senderQueue.pop();
   }
 
-  for(int g = 0; g < myArraySize; g++) {
-    Serial.print("ID: ");
-    Serial.println(myArray[g]);
-  }
+  do {
+    for(int g = 0; g < myArraySize; g++) {
+      setMux(myArray[g]);
+      Serial.print("ID: ");
+      Serial.println(myArray[g]);
+      
+      lcd.setCursor(0,0);
+      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      Serial.print("#1 :");
+      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      
+      lcd.setCursor(0,1);
+      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      Serial.print("#2 :");
+      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      
+      lcd.setCursor(0,2);
+      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      Serial.print("#3 :");
+      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      
+      lcd.setCursor(0,3);
+      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      Serial.print("#4 :");
+      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+    }
+    
+    Serial.println(lineCount);
+    Serial.println(lineNumber);
+    Serial.println("X set sent");
+    delay(5000);
+    lineNumber += 1;
+  } while(lineCount - lineNumber >= 4);
+
+//  do {
+//    lcd.setCursor(0,0);
+//      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+//      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+//      lcd.setCursor(0,1);
+//      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+//      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+//      lcd.setCursor(0,2);
+//      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+//      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+//      lcd.setCursor(0,3);
+//      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+//      Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+//      lineNumber += 1;
+//  } while(lineCount - lineNumber >= 4)
 
 //
 //  do {
 //    
 //  } while();
 
-  
-  scrollingText(msg);
   free(myArray);
   offAllLCD();
 }
@@ -186,17 +229,7 @@ int getOwnerList(char* message) {
   return index;
 }
 
-void recovery() {
-  while(!backupQueue.isEmpty()) {
-    int recipient = backupQueue.pop();
-    senderQueue.push(recipient);
-  }
-}
-
 void emptyQueues() {
-  while(!backupQueue.isEmpty()) {
-    backupQueue.pop();
-  }
   while(!senderQueue.isEmpty()) {
     senderQueue.pop();
   }
