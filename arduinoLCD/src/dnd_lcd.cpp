@@ -23,6 +23,7 @@ void breakMessage(const char* rawMsg);
 static inline std::string &trim(std::string &s);
 void split(const std::string& s, char seperator);
 bool is_number(const std::string& s);
+void messageController();
 
 /** Definitions and global variables **/
 #define CONTROL0 5
@@ -61,7 +62,6 @@ void loop() {
   recvWithStartEndMarkers();
   if (newData == true) {
     int sequence = 0;
-
     if (receivedChars[0] == 'r') {
       if (backUp.empty() == 1) {
         //Means there is no Msg to Repeat
@@ -74,40 +74,34 @@ void loop() {
     } else {
       breakMessage(receivedChars);
     }
-
     routeDecider(sequence);
-
     multicastList.clear();
     newData = false;
   }
 }
 
+//Mainly for debugging, but routes to either repeat or normal
 void routeDecider(int sequence) {
+
+  Serial.println("Inside List");
+  for (int g = 0; g < multicastList.size(); g++) {
+    Serial.print(multicastList.get(g));
+  }
+  Serial.println("");
+  Serial.println(receiverPart.c_str());
+  Serial.println(msgPart.c_str());
+
   switch(sequence) {
     case 0:
       //Normal Route
       Serial.println("Normal Route");
       backUp = receivedChars;
-
-      Serial.println("Inside List");
-      for (int g = 0; g < multicastList.size(); g++) {
-        Serial.print(multicastList.get(g));
-      }
-      Serial.println("");
-      Serial.println(receiverPart.c_str());
-      Serial.println(msgPart.c_str());
+      messageController();
       break;
     case 1:
       //Repeat Previous Msg
       Serial.println("Repeat Route");
-
-      Serial.println("Inside List");
-      for (int g = 0; g < multicastList.size(); g++) {
-        Serial.println(multicastList.get(g));
-      }
-      Serial.println("");
-      Serial.print(receiverPart.c_str());
-      Serial.println(msgPart.c_str());
+      messageController();
       break;
     default:
       Serial.println("Invalid Route");
@@ -115,10 +109,12 @@ void routeDecider(int sequence) {
   }
 }
 
+//Sends the message to the coressponding receivers
 void messageController() {
 
 }
 
+//Breaks the input to a list of receivers, and the message
 void breakMessage(const char* rawMsg) {
   std::string CppString = rawMsg;
   std::size_t pos = CppString.find("-");
@@ -137,6 +133,7 @@ void breakMessage(const char* rawMsg) {
   }
 }
 
+//Controller to handle MUX ouput, 0-15 are valid inputs
 void setMux(int x) {
   digitalWrite(CONTROL0, (x&15)>>3);
   digitalWrite(CONTROL1, (x&7)>>2);
@@ -145,10 +142,10 @@ void setMux(int x) {
 }
 
 /**
-Other people code below, mainly helper functions
+Other people code below, mainly helper functions, some modified
 **/
 
-//Handle serial input, using markers "<>"
+//Handle serial input, using markers "<>" for start/end
 void recvWithStartEndMarkers() {
   static boolean recvInProgress = false;
   static byte ndx = 0;
@@ -178,26 +175,27 @@ void recvWithStartEndMarkers() {
   }
 }
 
-// trim from start
+//Trim string from start
 static inline std::string &ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
             std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
 }
 
-// trim from end
+//Trim string from end
 static inline std::string &rtrim(std::string &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(),
             std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
 }
 
-// trim from both ends
+//Trim string from both ends
 static inline std::string &trim(std::string &s) {
     return ltrim(rtrim(s));
 }
 
-//Tokenise string, and add to multi-cast list (Modified)
+
+//Tokenise string by ',', and add to multi-cast list (Modified)
 void split(const std::string& s, char seperator) {
     std::string::size_type prev_pos = 0, pos = 0;
     while((pos = s.find(seperator, pos)) != std::string::npos)
@@ -216,6 +214,7 @@ void split(const std::string& s, char seperator) {
     }
 }
 
+//Check if a C++ std::string is a valid number
 bool is_number(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
