@@ -24,6 +24,10 @@ static inline std::string &trim(std::string &s);
 void split(const std::string& s, char seperator);
 bool is_number(const std::string& s);
 void messageController();
+void offAllLCD();
+void onAllLCD();
+std::vector<std::string> splitReturn(const std::string& s, char seperator);
+void sendMsg(std::string msg1, std::string msg2, std::string msg3, std::string msg4);
 
 /** Definitions and global variables **/
 #define CONTROL0 5
@@ -39,6 +43,8 @@ int mux2array[16];
 //LCD code management
 int numberOfLCD = 10;
 LiquidCrystal_I2C lcd(0x38,20,4);
+int scrollDelay = 1000;
+int LCDDelay = 4000;
 
 //List storing who to send MSG to
 LinkedList<int> multicastList = LinkedList<int>();
@@ -96,7 +102,7 @@ void loop() {
       //Means receiver list has at least one person, and msg is valid
       routeDecider(sequence);
     } else {
-      Serial.println("ERROR: Msg is omitted or no LCD entered");
+      Serial.println("ERROR: Msg is omitted or no LCD entered or INPUT to long");
     }
     Serial.println("WAIT: Awaiting Input");
     multicastList.clear();
@@ -110,7 +116,8 @@ void loop() {
 void routeDecider(int sequence) {
   switch(sequence) {
     case 0:
-      backUp = receivedChars;
+      backUp.clear();
+      backUp.append(receivedChars);
       messageController();
       break;
     case 1:
@@ -121,7 +128,79 @@ void routeDecider(int sequence) {
 
 //Sends the message to the coressponding receivers (AKA: LCD)
 void messageController() {
+  offAllLCD();
 
+  String msg = String(msgPart.c_str());
+
+  int lineNumber = 0;
+  int lineCount = ceil(msg.length()/20.0);
+  int myArraySize = multicastList.size();
+
+  Serial.print("Msg length: ");
+  Serial.println(msgPart.length());
+
+  Serial.print("Line count: ");
+  Serial.println(lineCount);
+
+  Serial.println(msg);
+
+  do {
+    for(int g = 0; g < myArraySize; g++) {
+      setMux(multicastList.get(g));
+      Serial.print("ID: ");
+      Serial.println(multicastList.get(g));
+
+      lcd.setCursor(0,0);
+      lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      Serial.print("#1 :");
+      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+
+      lcd.setCursor(0,1);
+      lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      Serial.print("#2 :");
+      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+
+      lcd.setCursor(0,2);
+      lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      Serial.print("#3 :");
+      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+
+      lcd.setCursor(0,3);
+      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+
+      if ((lineNumber+4)*20 > msgPart.length()) {
+        Serial.print("#4 :");
+        Serial.println(msg.substring((lineNumber+3)*20, msgPart.length()));
+      } else {
+        Serial.print("#4 :");
+        Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+      }
+
+    }
+
+    if(lineCount < 4) {
+      Serial.println("Delay 4 sec");
+      delay(LCDDelay);
+    }
+    else if(lineCount - lineNumber == 4) {
+      Serial.println("Delay 4 sec (Last line)");
+      delay(LCDDelay);
+    }
+    else {
+      Serial.println("Delay 1 sec");
+      delay(scrollDelay);
+    }
+
+    lineNumber += 1;
+  } while(lineCount - lineNumber >= 4);
+  onAllLCD();
+}
+
+void sendMsg(std::string msg1, std::string msg2, std::string msg3, std::string msg4) {
+  Serial.println(msg1.c_str());
+  Serial.println(msg2.c_str());
+  Serial.println(msg3.c_str());
+  Serial.println(msg4.c_str());
 }
 
 //Breaks the input to a list of receivers, and the message
@@ -149,6 +228,24 @@ void setMux(int x) {
   digitalWrite(CONTROL1, (x&7)>>2);
   digitalWrite(CONTROL2, (x&3)>>1);
   digitalWrite(CONTROL3, (x&1));
+}
+
+//Turn all backLight off for LCD
+void offAllLCD() {
+  for(int i = 0; i < numberOfLCD; i++) {
+    setMux(i);
+    lcd.clear();
+    lcd.noBacklight();
+  }
+}
+
+//Turn all backLight on for LCD
+void onAllLCD() {
+  for(int i = 0; i < numberOfLCD; i++) {
+    setMux(i);
+    lcd.clear();
+    lcd.backlight();
+  }
 }
 
 /**
