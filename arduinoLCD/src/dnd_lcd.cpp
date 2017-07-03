@@ -55,7 +55,7 @@ std::string msgPart;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("<Arduino is ready>");
+  Serial.println("WAIT: Awaiting Input..");
 }
 
 void loop() {
@@ -74,8 +74,16 @@ void loop() {
     } else {
       breakMessage(receivedChars);
     }
-    routeDecider(sequence);
+    if(msgPart.empty() != 1 && multicastList.size() != 0) {
+      //Means receiver list has at least one person, and msg is valid
+      routeDecider(sequence);
+    } else {
+      Serial.println("ERROR: Msg is omitted or no LCD entered");
+    }
+    Serial.println("WAIT: Awaiting Input..");
     multicastList.clear();
+    receiverPart.clear();
+    msgPart.clear();
     newData = false;
   }
 }
