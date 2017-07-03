@@ -26,8 +26,6 @@ bool is_number(const std::string& s);
 void messageController();
 void offAllLCD();
 void onAllLCD();
-std::vector<std::string> splitReturn(const std::string& s, char seperator);
-void sendMsg(std::string msg1, std::string msg2, std::string msg3, std::string msg4);
 
 /** Definitions and global variables **/
 #define CONTROL0 5
@@ -50,7 +48,7 @@ int LCDDelay = 4000;
 LinkedList<int> multicastList = LinkedList<int>();
 
 //Serial input
-const byte numChars = 150;
+const byte numChars = 165;
 char receivedChars[numChars];   // an array to store the received data
 std::string backUp;
 boolean newData = false;
@@ -136,71 +134,64 @@ void messageController() {
   int lineCount = ceil(msg.length()/20.0);
   int myArraySize = multicastList.size();
 
-  Serial.print("Msg length: ");
-  Serial.println(msgPart.length());
-
-  Serial.print("Line count: ");
-  Serial.println(lineCount);
-
-  Serial.println(msg);
+  // Serial.print("Msg length: ");
+  // Serial.println(msgPart.length());
+  //
+  // Serial.print("Line count: ");
+  // Serial.println(lineCount);
+  //
+  // Serial.println(msg);
 
   do {
     for(int g = 0; g < myArraySize; g++) {
       setMux(multicastList.get(g));
-      Serial.print("ID: ");
-      Serial.println(multicastList.get(g));
+      // Serial.print("ID: ");
+      // Serial.println(multicastList.get(g));
 
       lcd.setCursor(0,0);
       lcd.print(msg.substring(lineNumber*20, (lineNumber+1)*20));
-      Serial.print("#1 :");
-      Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
+      // Serial.print("#1 :");
+      // Serial.println(msg.substring(lineNumber*20, (lineNumber+1)*20));
 
       lcd.setCursor(0,1);
       lcd.print(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
-      Serial.print("#2 :");
-      Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
+      // Serial.print("#2 :");
+      // Serial.println(msg.substring((lineNumber+1)*20, (lineNumber+2)*20));
 
       lcd.setCursor(0,2);
       lcd.print(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
-      Serial.print("#3 :");
-      Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
+      // Serial.print("#3 :");
+      // Serial.println(msg.substring((lineNumber+2)*20, (lineNumber+3)*20));
 
       lcd.setCursor(0,3);
-      lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
-
       if ((lineNumber+4)*20 > msgPart.length()) {
-        Serial.print("#4 :");
-        Serial.println(msg.substring((lineNumber+3)*20, msgPart.length()));
+        lcd.print(msg.substring((lineNumber+3)*20, msgPart.length()));
+        // Serial.print("#4 :");
+        // Serial.println(msg.substring((lineNumber+3)*20, msgPart.length()));
       } else {
-        Serial.print("#4 :");
-        Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+        lcd.print(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
+        // Serial.print("#4 :");
+        // Serial.println(msg.substring((lineNumber+3)*20, (lineNumber+4)*20));
       }
 
     }
 
     if(lineCount < 4) {
-      Serial.println("Delay 4 sec");
+      // Serial.println("Delay 4 sec");
       delay(LCDDelay);
     }
     else if(lineCount - lineNumber == 4) {
-      Serial.println("Delay 4 sec (Last line)");
+      // Serial.println("Delay 4 sec (Last line)");
       delay(LCDDelay);
     }
     else {
-      Serial.println("Delay 1 sec");
+      // Serial.println("Delay 1 sec");
       delay(scrollDelay);
     }
 
     lineNumber += 1;
   } while(lineCount - lineNumber >= 4);
   onAllLCD();
-}
-
-void sendMsg(std::string msg1, std::string msg2, std::string msg3, std::string msg4) {
-  Serial.println(msg1.c_str());
-  Serial.println(msg2.c_str());
-  Serial.println(msg3.c_str());
-  Serial.println(msg4.c_str());
 }
 
 //Breaks the input to a list of receivers, and the message
