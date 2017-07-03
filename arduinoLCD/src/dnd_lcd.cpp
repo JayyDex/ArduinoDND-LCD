@@ -50,7 +50,7 @@ int LCDDelay = 4000;
 LinkedList<int> multicastList = LinkedList<int>();
 
 //Serial input
-const byte numChars = 255;
+const byte numChars = 150;
 char receivedChars[numChars];   // an array to store the received data
 std::string backUp;
 boolean newData = false;
