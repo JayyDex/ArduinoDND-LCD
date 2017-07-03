@@ -44,7 +44,7 @@ LiquidCrystal_I2C lcd(0x38,20,4);
 LinkedList<int> multicastList = LinkedList<int>();
 
 //Serial input
-const byte numChars = 250;
+const byte numChars = 255;
 char receivedChars[numChars];   // an array to store the received data
 std::string backUp;
 boolean newData = false;
@@ -55,7 +55,25 @@ std::string msgPart;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("WAIT: Awaiting Input..");
+
+  /* Setup MUX Control Pins */
+  pinMode(CONTROL0, OUTPUT);
+  pinMode(CONTROL1, OUTPUT);
+  pinMode(CONTROL2, OUTPUT);
+  pinMode(CONTROL3, OUTPUT);
+
+  /* Setup Arduino */
+  Serial.print("Initialising.... ");
+  for (int i=0; i<numberOfLCD; i++) {
+    digitalWrite(CONTROL0, (i&15)>>3);
+    digitalWrite(CONTROL1, (i&7)>>2);
+    digitalWrite(CONTROL2, (i&3)>>1);
+    digitalWrite(CONTROL3, (i&1));
+    lcd.begin();
+  }
+
+  Serial.print("Initialisation Complete\n\n");
+  Serial.println("WAIT: Awaiting Input");
 }
 
 void loop() {
@@ -80,7 +98,7 @@ void loop() {
     } else {
       Serial.println("ERROR: Msg is omitted or no LCD entered");
     }
-    Serial.println("WAIT: Awaiting Input..");
+    Serial.println("WAIT: Awaiting Input");
     multicastList.clear();
     receiverPart.clear();
     msgPart.clear();
@@ -90,34 +108,18 @@ void loop() {
 
 //Mainly for debugging, but routes to either repeat or normal
 void routeDecider(int sequence) {
-
-  Serial.println("Inside List");
-  for (int g = 0; g < multicastList.size(); g++) {
-    Serial.print(multicastList.get(g));
-  }
-  Serial.println("");
-  Serial.println(receiverPart.c_str());
-  Serial.println(msgPart.c_str());
-
   switch(sequence) {
     case 0:
-      //Normal Route
-      Serial.println("Normal Route");
       backUp = receivedChars;
       messageController();
       break;
     case 1:
-      //Repeat Previous Msg
-      Serial.println("Repeat Route");
       messageController();
-      break;
-    default:
-      Serial.println("Invalid Route");
       break;
   }
 }
 
-//Sends the message to the coressponding receivers
+//Sends the message to the coressponding receivers (AKA: LCD)
 void messageController() {
 
 }
