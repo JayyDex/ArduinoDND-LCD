@@ -74,6 +74,7 @@ void setup() {
     digitalWrite(CONTROL2, (i&3)>>1);
     digitalWrite(CONTROL3, (i&1));
     lcd.begin();
+    lcd.noBacklight();
   }
 
   Serial.print("Initialisation Complete\n\n");
@@ -98,6 +99,9 @@ void loop() {
     }
     if(msgPart.empty() != 1 && multicastList.size() != 0) {
       //Means receiver list has at least one person, and msg is valid
+      Serial.print("INPUT: ");
+      Serial.println(receivedChars);
+      Serial.println("SENDING DATA, PLEASE WAIT...");
       routeDecider(sequence);
     } else {
       Serial.println("ERROR: Msg is omitted or no LCD entered or INPUT to long");
@@ -126,7 +130,7 @@ void routeDecider(int sequence) {
 
 //Sends the message to the coressponding receivers (AKA: LCD)
 void messageController() {
-  offAllLCD();
+  onAllLCD();
 
   String msg = String(msgPart.c_str());
 
@@ -191,13 +195,13 @@ void messageController() {
 
     lineNumber += 1;
   } while(lineCount - lineNumber >= 4);
-  onAllLCD();
+  offAllLCD();
 }
 
 //Breaks the input to a list of receivers, and the message
 void breakMessage(const char* rawMsg) {
   std::string CppString = rawMsg;
-  std::size_t pos = CppString.find("-");
+  std::size_t pos = CppString.find(" ");
 
   receiverPart = CppString.substr(0,pos);
   msgPart = CppString.substr(pos+1);
@@ -244,34 +248,58 @@ Other people code below, mainly helper functions, some modified
 **/
 
 //Handle serial input, using markers "<>" for start/end
+// void recvWithStartEndMarkers() {
+//   static boolean recvInProgress = false;
+//   static byte ndx = 0;
+//   char startMarker = '<';
+//   char endMarker = '>';
+//   char rc;
+//   while (Serial.available() > 0 && newData == false) {
+//     rc = Serial.read();
+//     if (recvInProgress == true) {
+//       if (rc != endMarker) {
+//         receivedChars[ndx] = rc;
+//         ndx++;
+//         if (ndx >= numChars) {
+//           ndx = numChars - 1;
+//         }
+//       }
+//       else {
+//         receivedChars[ndx] = '\0'; // terminate the string
+//         recvInProgress = false;
+//         ndx = 0;
+//         newData = true;
+//       }
+//     }
+//     else if (rc == startMarker) {
+//       recvInProgress = true;
+//     }
+//   }
+// }
+
 void recvWithStartEndMarkers() {
-  static boolean recvInProgress = false;
-  static byte ndx = 0;
-  char startMarker = '<';
-  char endMarker = '>';
-  char rc;
-  while (Serial.available() > 0 && newData == false) {
-    rc = Serial.read();
-    if (recvInProgress == true) {
-      if (rc != endMarker) {
-        receivedChars[ndx] = rc;
-        ndx++;
-        if (ndx >= numChars) {
-          ndx = numChars - 1;
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+
+    while (Serial.available() > 0 && newData == false) {
+        rc = Serial.read();
+
+        if (rc != endMarker) {
+            receivedChars[ndx] = rc;
+            ndx++;
+            if (ndx >= numChars) {
+                ndx = numChars - 1;
+            }
         }
-      }
-      else {
-        receivedChars[ndx] = '\0'; // terminate the string
-        recvInProgress = false;
-        ndx = 0;
-        newData = true;
-      }
+        else {
+            receivedChars[ndx] = '\0'; // terminate the string
+            ndx = 0;
+            newData = true;
+        }
     }
-    else if (rc == startMarker) {
-      recvInProgress = true;
-    }
-  }
 }
+
 
 //Trim string from start
 static inline std::string &ltrim(std::string &s) {
