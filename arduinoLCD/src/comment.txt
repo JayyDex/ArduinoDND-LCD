@@ -1,0 +1,26 @@
+//Mainly for debugging, but routes to either repeat or normal (1:50am - 4 July 2017)
+void routeDecider(int sequence) {
+  // Serial.println("Inside List");
+  // for (int g = 0; g < multicastList.size(); g++) {
+  //   Serial.print(multicastList.get(g));
+  // }
+  // Serial.println("");
+  // Serial.println(receiverPart.c_str());
+  // Serial.println(msgPart.c_str());
+  switch(sequence) {
+    case 0:
+      //Normal Route
+      // Serial.println("Normal Route");
+      backUp = receivedChars;
+      messageController();
+      break;
+    case 1:
+      //Repeat Previous Msg
+      // Serial.println("Repeat Route");
+      messageController();
+      break;
+    default:
+      // Serial.println("Invalid Route");
+      break;
+  }
+}
