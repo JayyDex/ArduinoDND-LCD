@@ -15,9 +15,19 @@ h1 {
 
 .secondPanel {
   background-color: #F1F1F1;
+  height: 95vh;
+  overflow: hidden;
+  border-left: 1px solid #979797;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
+div.row {
+  margin-bottom: 0px;
+}
+
+div.col.s4 {
+  padding: 0px;
+}
+
+div.noselect.row {
+  margin-top: 14px;
 }

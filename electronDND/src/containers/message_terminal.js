@@ -115,7 +115,7 @@ class MessageTerminal extends Component {
   render() {
     return(
       <div className="noselect row">
-        <div className="input-field col s12">
+        <div className="input-field col s12 shiftText">
           <textarea
             placeholder={`${this.readyStatus()}`}
             id="textarea1"
