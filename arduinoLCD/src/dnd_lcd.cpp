@@ -99,9 +99,9 @@ void loop() {
     }
     if(msgPart.empty() != 1 && multicastList.size() != 0) {
       //Means receiver list has at least one person, and msg is valid
-      Serial.print("INPUT: ");
-      Serial.println(receivedChars);
-      Serial.println("SENDING DATA, PLEASE WAIT...");
+      //Serial.print("INPUT: ");
+      //Serial.println(receivedChars);
+      //Serial.println("SENDING DATA, PLEASE WAIT...");
       routeDecider(sequence);
     } else {
       Serial.println("ERROR: Msg is omitted or no LCD entered or INPUT to long");
@@ -248,57 +248,57 @@ Other people code below, mainly helper functions, some modified
 **/
 
 //Handle serial input, using markers "<>" for start/end
-// void recvWithStartEndMarkers() {
-//   static boolean recvInProgress = false;
-//   static byte ndx = 0;
-//   char startMarker = '<';
-//   char endMarker = '>';
-//   char rc;
-//   while (Serial.available() > 0 && newData == false) {
-//     rc = Serial.read();
-//     if (recvInProgress == true) {
-//       if (rc != endMarker) {
-//         receivedChars[ndx] = rc;
-//         ndx++;
-//         if (ndx >= numChars) {
-//           ndx = numChars - 1;
-//         }
-//       }
-//       else {
-//         receivedChars[ndx] = '\0'; // terminate the string
-//         recvInProgress = false;
-//         ndx = 0;
-//         newData = true;
-//       }
-//     }
-//     else if (rc == startMarker) {
-//       recvInProgress = true;
-//     }
-//   }
-// }
-
 void recvWithStartEndMarkers() {
-    static byte ndx = 0;
-    char endMarker = '\n';
-    char rc;
-
-    while (Serial.available() > 0 && newData == false) {
-        rc = Serial.read();
-
-        if (rc != endMarker) {
-            receivedChars[ndx] = rc;
-            ndx++;
-            if (ndx >= numChars) {
-                ndx = numChars - 1;
-            }
+  static boolean recvInProgress = false;
+  static byte ndx = 0;
+  char startMarker = '<';
+  char endMarker = '>';
+  char rc;
+  while (Serial.available() > 0 && newData == false) {
+    rc = Serial.read();
+    if (recvInProgress == true) {
+      if (rc != endMarker) {
+        receivedChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numChars) {
+          ndx = numChars - 1;
         }
-        else {
-            receivedChars[ndx] = '\0'; // terminate the string
-            ndx = 0;
-            newData = true;
-        }
+      }
+      else {
+        receivedChars[ndx] = '\0'; // terminate the string
+        recvInProgress = false;
+        ndx = 0;
+        newData = true;
+      }
     }
+    else if (rc == startMarker) {
+      recvInProgress = true;
+    }
+  }
 }
+
+// void recvWithStartEndMarkers() {
+//     static byte ndx = 0;
+//     char endMarker = '\n';
+//     char rc;
+//
+//     while (Serial.available() > 0 && newData == false) {
+//         rc = Serial.read();
+//
+//         if (rc != endMarker) {
+//             receivedChars[ndx] = rc;
+//             ndx++;
+//             if (ndx >= numChars) {
+//                 ndx = numChars - 1;
+//             }
+//         }
+//         else {
+//             receivedChars[ndx] = '\0'; // terminate the string
+//             ndx = 0;
+//             newData = true;
+//         }
+//     }
+// }
 
 
 //Trim string from start

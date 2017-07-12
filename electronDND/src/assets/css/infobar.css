@@ -1,0 +1,24 @@
+.barColor {
+  padding-left: 10px;
+  background: #008184;
+  border: 1px solid #979797;
+  height: 24px;
+}
+
+.labelColor  {
+  font-family: Roboto-Medium;
+  font-size: 13px;
+  color: rgba(255,255,255,0.87);
+}
+
+.lblgreen {
+  font-family: Roboto-Medium;
+  font-size: 13px;
+  color: rgba(4,255,160,1);
+}
+
+.lblred {
+  font-family: Roboto-Medium;
+  font-size: 13px;
+  color: rgba(255,177,0,1);
+}

@@ -59,5 +59,8 @@ module.exports = {
     children: false,
     chunks: false,
     modules: false
+  },
+  externals: {
+    "serialport": "require('serialport')"
   }
 };

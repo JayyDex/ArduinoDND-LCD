@@ -1,0 +1,76 @@
+.shiftCount {
+  font-size: 11px;
+  margin-top: -20px;
+}
+
+.shiftCountRED {
+  font-size: 11px;
+  margin-top: -20px;
+  color: #F5A623;
+}
+
+.queueBtn {
+  background-color: #F47A20;
+  margin: 5px;
+}
+
+.queueBtn:hover {
+  background-color: #F5A623;
+}
+
+.sendBtn {
+  background-color: #00979D;
+  margin: 5px;
+  margin-right: -3px;
+}
+
+.userContainer {
+  margin-left: 10px;
+  margin-right: -10px;
+}
+
+.userBox {
+  height: 30px;
+  border-radius: 2px;
+  text-align: center;
+  background: #F1F1F1;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.24);
+  margin: 7px;
+  font-family: Roboto-Medium;
+  font-size: 12px;
+  color: rgba(0,0,0,0.87);
+}
+
+.userBoxDisabled {
+  height: 30px;
+  border-radius: 2px;
+  opacity: 0.5;
+  text-align: center;
+  background: #F1F1F1;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.24);
+  margin: 7px;
+  font-family: Roboto-Medium;
+  font-size: 12px;
+  color: rgba(0,0,0,0.87);
+}
+
+.userBoxActive {
+  height: 30px;
+  border-radius: 2px;
+  text-align: center;
+  background: #00979D;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.24);
+  margin: 7px;
+  font-family: Roboto-Medium;
+  font-size: 12px;
+  color: rgba(0,0,0,0.87);
+}
+
+.userBox:hover {
+  background-color: #F47A20;
+}
+
+.userBoxShift {
+  padding-top: 6px;
+  display:inline-block;
+}

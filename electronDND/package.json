@@ -16,7 +16,7 @@
     "build": "webpack --config webpack.build.config.js",
     "package": "webpack --config webpack.build.config.js",
     "postpackage": "electron-packager ./ --out=./builds",
-    "rebuild": "electron-rebuild"
+    "install": "electron-rebuild"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -39,6 +39,8 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.1",
     "serialport": "^5.0.0-beta7"
   }
 }

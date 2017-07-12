@@ -1,0 +1,40 @@
+.toolBar {
+  background: #00979D;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.12), 0px 4px 4px 0px rgba(0,0,0,0.24);
+  margin-left: -11px;
+  margin-right: -10px;
+  padding: 10px;
+}
+
+.dropDownBar {
+  width: 100%;
+  background-color: white;
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 2px 2px 0px rgba(0,0,0,0.24);
+  height: 36px;
+  max-height: 36px;
+  border-radius: 2px;
+}
+
+.dropDownBar:hover {
+  background-color: white;
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 3px 2px 0px rgba(0,0,0,0.24);
+}
+
+.dropDownFont {
+  color: black;
+  font-size: 14px;
+  margin-top: 8px;
+  width: 80%;
+}
+
+.dropDownIcon {
+  margin-top: 6px;
+}
+
+.settingBtn {
+  height: 36px;
+  width: 36px;
+  padding: 0px;
+  margin: 0px;
+  border-radius: 2px;
+}
