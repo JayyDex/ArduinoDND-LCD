@@ -1,7 +1,5 @@
 import '../assets/css/app.css';
 import '../assets/css/materialize.min.css';
-import 'hammerjs';
-import 'jquery';
 
 import SerialPort from 'serialport';
 import React, { Component } from 'react';
