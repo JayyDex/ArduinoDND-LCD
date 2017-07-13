@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ReactScrollbar from 'react-scrollbar-js';
 
 import '../assets/css/history_list.css';
 import HistoryDetail from '../components/history_detail';
@@ -25,12 +26,20 @@ class HistoryList extends Component {
   }
 
   render() {
+
+    const myScrollbar = {
+      width: 500,
+      height: 260,
+    };
+
     return(
       <div>
         <label className='histroylbl'>History</label>
-        <ul>
-          {this.renderHistory()}
-        </ul>
+        <ReactScrollbar style={myScrollbar}>
+          <ul>
+            {this.renderHistory()}
+          </ul>
+        </ReactScrollbar>
       </div>
     );
   }
