@@ -15,5 +15,13 @@
 }
 
 .listHeight {
-  height: 40px;
+  min-height: 40px;
+  height: 100%;
+}
+
+.descriptionLbl {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  max-height: 100%;
 }

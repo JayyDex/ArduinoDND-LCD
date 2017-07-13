@@ -8,9 +8,9 @@
 .react-scrollbar-default {
   width: 35%;
   min-width: 430px;
-  max-height: 285px;
+  max-height: 260px;
 }
 
 .scroll-me {
-  padding-bottom: 12px;
+  padding-bottom: 14px;
 }

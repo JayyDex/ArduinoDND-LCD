@@ -10,10 +10,11 @@ const UniqueLabel = (data, props) => {
     props.userList.forEach((user) => {
       if(data == user[0]) {
         UserList = UserList.concat(user[1]);
-        UserList = UserList.concat(',');
+        UserList = UserList.concat(', ');
       }
     })
   });
+  UserList = UserList.substring(0, UserList.length - 1);
   UserList = UserList.substring(0, UserList.length - 1);
   return(UserList);
 }
@@ -27,6 +28,14 @@ const sendMessageManage = (props) => {
   }
 }
 
+const cutMessage = (raw) => {
+  if(raw.length > 100) {
+    return(raw.substr(0,100) + '....');
+  } else {
+    return(raw);
+  }
+}
+
 const HistoryDetail = (props) => {
   var people = props.message.people;
   var raw = props.message.raw;
@@ -35,12 +44,13 @@ const HistoryDetail = (props) => {
   return(
     <li>
       <div>
-        <label className='title'>
+        <label className='title noselect'>
           {UniqueLabel(people, props)}
         </label>
       </div>
       <div className='row listHeight'>
-        <label className='col s10'>
+        <label className='col s10 descriptionLbl'>
+          {/* {cutMessage(raw)} */}
           {raw}
         </label>
         <div className='col s2 right-align'>

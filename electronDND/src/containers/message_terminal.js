@@ -134,6 +134,8 @@ class MessageTerminal extends Component {
 
     this.props.addToHistory(this.state.checkedBox, this.state.message, modifiedMessage);
     this.setState({message: ''})
+    $('#textarea1').val(this.state.message);
+    $('#textarea1').trigger('autoresize');
 
   }
 

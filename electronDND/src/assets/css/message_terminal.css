@@ -3,6 +3,10 @@
   margin-top: -20px;
 }
 
+textarea {
+    resize: none;
+}
+
 .shiftCountRED {
   font-size: 11px;
   margin-top: -20px;
@@ -79,4 +83,8 @@
 
 .shiftText {
   padding-top: 20px;
+}
+
+.materialize-textarea {
+  max-height: 63px;
 }

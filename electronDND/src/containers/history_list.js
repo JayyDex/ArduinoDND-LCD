@@ -29,12 +29,6 @@ class HistoryList extends Component {
   }
 
   render() {
-
-    const myScrollbar = {
-      width: 430,
-      height: 290,
-    };
-
     return(
       <div>
         <label className='histroylbl noselect'>History</label>
