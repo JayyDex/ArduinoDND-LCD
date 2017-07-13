@@ -107,7 +107,7 @@ class MessageTerminal extends Component {
   readyMessage(val) {
     var modifiedMessage = '';
     //DEBUG SECTION
-    if(this.state.message === '' || this.state.checkedBox.length < 1 ) {
+    if(this.state.message === '' || this.state.checkedBox.length < 1 || this.props.ready != 1 ) {
       return;
     }
 

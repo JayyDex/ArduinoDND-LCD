@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import ReactScrollbar from 'react-scrollbar-js';
 
 import '../assets/css/history_list.css';
+import giphy from '../assets/img/giphy.gif';
 import HistoryDetail from '../components/history_detail';
 
 class HistoryList extends Component {
@@ -12,7 +13,7 @@ class HistoryList extends Component {
   }
 
   renderHistory() {
-    if (this.props.history) {
+    if (this.props.history.length > 0) {
       return this.props.history.map((message) => {
         return (
           <HistoryDetail
@@ -24,6 +25,16 @@ class HistoryList extends Component {
           />
         );
       });
+    } else {
+      return(
+        <div className='noselect row center-align'>
+          <label className='col s12'>
+            No History Found
+          </label>
+          <img src={giphy} className='gifSize' />
+        </div>
+
+      );
     }
 
   }
