@@ -1,5 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+
+import reducers from './reducers';
 import App from './components/app';
 
 // Since we are using HtmlWebpackPlugin WITHOUT a template, we should create our own root node in the body element before rendering into it
@@ -16,7 +20,12 @@ icons.setAttribute('href', 'https://fonts.googleapis.com/icon?family=Material+Ic
 icons.setAttribute('rel', 'stylesheet');
 document.head.appendChild(icons);
 
-
+const createStoreWithMiddleware = applyMiddleware()(createStore);
 
 // Now we can render our application into it
-render( <App />, document.getElementById('root') );
+render(
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <App />
+  </Provider>
+
+  , document.getElementById('root') );

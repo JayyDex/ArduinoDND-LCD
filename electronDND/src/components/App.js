@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import InfoBar from './infobar';
 import ToolBar from './toolbar';
 import MessageTerminal from '../containers/message_terminal';
+import HistoryList from '../containers/history_list';
 
 var isSameSet = function( arr1, arr2 ) {
   return  $( arr1 ).not( arr2 ).length === 0 && $( arr2 ).not( arr1 ).length === 0;
@@ -22,7 +23,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       status: 0,
-      ready: false,
+      ready: 0,
       portList: [],
       userList: [
         [0, 'Zero'],
@@ -60,21 +61,17 @@ class App extends React.Component {
 
   //Send Message to Arduino
   sendMessage(message) {
+    console.log("SENDING:" + message);
+
     var formMessage = "<" + message + ">"
-    if (port && message && this.state.ready == true) {
-      this.setState({ready: false});
-      port.write(formMessage, function(err) {
-        if (err) {
-          return console.log('Error on write: ', err.message);
-        }
-        console.log('Message Written');
-      });
+    if (port && message && this.state.ready == 1) {
+      port.write(formMessage);
     }
   }
 
   //Connect to Arduino Serial
   performConnection(portName) {
-    this.setState({status: 2, ready: false});
+    this.setState({status: 2, ready: 0});
     if(port) {
       port.close((error) => {
         console.log("Closing Any Old Connection");
@@ -92,8 +89,11 @@ class App extends React.Component {
       if(data.includes('Initialisation Complete')) {
         this.setState({status: 1});
       }
+      if(data.includes('SENDING DATA')) {
+        this.setState({ready: 2});
+      }
       if(data.includes('WAIT: Awaiting Input')) {
-        this.setState({ready: true});
+        this.setState({ready: 1});
       }
       console.log(data);
     });
@@ -111,15 +111,22 @@ class App extends React.Component {
       <div>
         <InfoBar status={this.state.status}/>
         <div className='row'>
-          <div className="col s8">
+          <div className="col s12">
             <ToolBar
               performConnection={this.performConnection}
               portList={this.state.portList}
               sendMessage={this.sendMessage}
             />
-            <MessageTerminal ready={this.state.ready} userList={this.state.userList}/>
+            <MessageTerminal
+              ready={this.state.ready}
+              userList={this.state.userList}
+              sendMessage={(msg) => this.sendMessage(msg)}
+            />
+            <HistoryList userList={this.state.userList} sendMessage={(msg) => this.sendMessage(msg)} ready={this.state.ready}/>
           </div>
-          <div className="col s4 secondPanel">6-columns (one-half)</div>
+
+
+          {/* <div className="col s4 secondPanel">6-columns (one-half)</div> */}
 
         </div>
       </div>

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import '../assets/css/message_terminal.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { addToHistory } from '../actions/index';
 
 class MessageTerminal extends Component {
   constructor(props) {
@@ -16,13 +20,22 @@ class MessageTerminal extends Component {
   }
 
   handleToggle(val) {
+    var JSONObj = new Object();
+    JSONObj['number'] = val[0];
+    JSONObj['name'] = val[1];
+
+
     if (val[0] == 100) {
-      var index = this.state.checkedBox.indexOf(val[0])
+      var index = this.state.checkedBox.indexOf(val[0]);
       if (index != -1) {
         this.setState({checkedBox: [] })
       } else {
         this.setState({checkedBox: [val[0]] })
       }
+      return;
+    }
+    var allCheck = this.state.checkedBox.indexOf(100);
+    if (allCheck != -1) {
       return;
     }
 
@@ -48,7 +61,12 @@ class MessageTerminal extends Component {
   }
 
   readyStatus() {
-    if(this.props.ready) {
+    if(this.props.ready == 2) {
+      return(
+        'Sending Data... Please Wait'
+      );
+    }
+    if(this.props.ready == 1) {
       return(
         'Ready for Input'
       );
@@ -87,13 +105,13 @@ class MessageTerminal extends Component {
   }
 
   readyMessage(val) {
-    if(this.state.message === '') {
+    var modifiedMessage = '';
+    if(this.state.message === '' || this.state.checkedBox.length < 1 || this.props.ready == 0 ) {
       return;
     }
 
     if(val) {
       //Send Message
-      var modifiedMessage = '';
       this.state.checkedBox.forEach((data) => {
         if (data == 100) {
           modifiedMessage = modifiedMessage.concat('a,');
@@ -105,10 +123,14 @@ class MessageTerminal extends Component {
       modifiedMessage = modifiedMessage.substring(0, modifiedMessage.length - 1);
       modifiedMessage = modifiedMessage.concat('-');
       modifiedMessage = modifiedMessage.concat(this.state.message);
-      console.log(modifiedMessage);
+      // console.log(modifiedMessage);
+      this.props.sendMessage(modifiedMessage);
     } else {
       //Queue Message
     }
+
+    this.props.addToHistory(this.state.checkedBox, this.state.message, modifiedMessage);
+    this.setState({message: ''})
 
   }
 
@@ -147,4 +169,8 @@ class MessageTerminal extends Component {
   }
 }
 
-export default MessageTerminal;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ addToHistory: addToHistory }, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(MessageTerminal);

@@ -58,16 +58,18 @@
   height: 30px;
   border-radius: 2px;
   text-align: center;
-  background: #00979D;
+  /*background: #00979D;*/
+  background-color: #005D60;
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.24);
   margin: 7px;
   font-family: Roboto-Medium;
   font-size: 12px;
-  color: rgba(0,0,0,0.87);
+  color: white;
 }
 
 .userBox:hover {
-  background-color: #F47A20;
+  background-color: #00979D;
+  color: white;
 }
 
 .userBoxShift {

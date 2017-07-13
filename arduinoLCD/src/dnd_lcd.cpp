@@ -99,9 +99,9 @@ void loop() {
     }
     if(msgPart.empty() != 1 && multicastList.size() != 0) {
       //Means receiver list has at least one person, and msg is valid
-      //Serial.print("INPUT: ");
-      //Serial.println(receivedChars);
-      //Serial.println("SENDING DATA, PLEASE WAIT...");
+      Serial.print("INPUT: ");
+      Serial.println(receivedChars);
+      Serial.println("SENDING DATA, PLEASE WAIT...");
       routeDecider(sequence);
     } else {
       Serial.println("ERROR: Msg is omitted or no LCD entered or INPUT to long");
@@ -201,7 +201,7 @@ void messageController() {
 //Breaks the input to a list of receivers, and the message
 void breakMessage(const char* rawMsg) {
   std::string CppString = rawMsg;
-  std::size_t pos = CppString.find(" ");
+  std::size_t pos = CppString.find("-");
 
   receiverPart = CppString.substr(0,pos);
   msgPart = CppString.substr(pos+1);

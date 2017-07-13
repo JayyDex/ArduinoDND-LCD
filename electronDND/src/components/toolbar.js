@@ -19,7 +19,6 @@ class ToolBar extends Component {
   renderPorts() {
     console.log(this.props.portList);
     if (this.props.portList.length == 0) {
-      console.log("Hi");
       return(
         <li><a href="#!">Scanning for Ports...</a></li>
       );
