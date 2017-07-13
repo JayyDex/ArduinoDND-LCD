@@ -1,5 +1,16 @@
 .histroylbl {
+  padding-left: 5px;
   font-family: Roboto-Bold;
   font-size: 13px;
   color: #00979D;
+}
+
+.react-scrollbar-default {
+  width: 35%;
+  min-width: 430px;
+  max-height: 285px;
+}
+
+.scroll-me {
+  padding-bottom: 12px;
 }

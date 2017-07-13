@@ -43,8 +43,8 @@ const HistoryDetail = (props) => {
         <label className='col s10'>
           {raw}
         </label>
-        <div className='col s2'>
-          <button className='btn historySendBtn waves-light waves-effect center-align' onClick={sendMessageManage.bind(this, props)}>
+        <div className='col s2 right-align'>
+          <button className='btn historySendBtn waves-light waves-effect' onClick={sendMessageManage.bind(this, props)}>
             <i className='material-icons'>keyboard_arrow_right</i>
           </button>
         </div>

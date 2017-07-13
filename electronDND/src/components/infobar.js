@@ -13,9 +13,23 @@ const arduinoStatus = (status) => {
   }
 }
 
+const closeWindow = () => {
+  const remote = require('electron').remote;
+  let w = remote.getCurrentWindow();
+  w.close();
+}
+
+const minimise = () => {
+  const remote = require('electron').remote;
+  let w = remote.getCurrentWindow();
+  w.minimize();
+}
+
 const InfoBar = (props) => {
   return(
-    <div className='barColor noselect'>
+    <div className='barColor noselect' >
+      <div className='circleExit' onClick={closeWindow.bind(this)}/>
+      <div className='circleMinimise' onClick={minimise.bind(this)}/>
       {arduinoStatus(props.status)}
     </div>
   );

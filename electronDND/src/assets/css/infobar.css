@@ -3,9 +3,13 @@
   background: #005D60;
   border: 1px solid #979797;
   height: 24px;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
 
 .labelColor  {
+  position: absolute;
+  margin-top: 2px;
   font-family: Roboto-Medium;
   font-size: 13px;
   color: rgba(255,255,255,0.87);
@@ -21,4 +25,36 @@
   font-family: Roboto-Medium;
   font-size: 13px;
   color: rgba(255,177,0,1);
+}
+
+.circleExit {
+  margin-top: 4px;
+  margin-right: 5px;
+  background: #CDCDCD;
+  display:inline-block;
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+  border: 1px solid #BBBBBB;
+}
+
+.barColor:hover .circleExit {
+  background: #FF6159;
+  border: 1px solid #9F3C37;
+}
+
+.barColor:hover .circleMinimise {
+  background: #FFBD2E;
+  border: 1px solid #D09B27;
+}
+
+.circleMinimise {
+  margin-top: 4px;
+  margin-right: 10px;
+  background: #CDCDCD;
+  display:inline-block;
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+  border: 1px solid #BBBBBB;
 }

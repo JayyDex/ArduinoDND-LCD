@@ -12,31 +12,34 @@ class HistoryList extends Component {
   }
 
   renderHistory() {
-    return this.props.history.map((message) => {
-      return (
-        <HistoryDetail
-          key={message.modified}
-          message={message}
-          userList={this.props.userList}
-          sendMessage={(msg) => this.props.sendMessage(msg)}
-          ready={this.props.ready}
-        />
-      );
-    });
+    if (this.props.history) {
+      return this.props.history.map((message) => {
+        return (
+          <HistoryDetail
+            key={message.modified}
+            message={message}
+            userList={this.props.userList}
+            sendMessage={(msg) => this.props.sendMessage(msg)}
+            ready={this.props.ready}
+          />
+        );
+      });
+    }
+
   }
 
   render() {
 
     const myScrollbar = {
-      width: 500,
-      height: 260,
+      width: 430,
+      height: 290,
     };
 
     return(
       <div>
-        <label className='histroylbl'>History</label>
-        <ReactScrollbar style={myScrollbar}>
-          <ul>
+        <label className='histroylbl noselect'>History</label>
+        <ReactScrollbar>
+          <ul className='scroll-me'>
             {this.renderHistory()}
           </ul>
         </ReactScrollbar>

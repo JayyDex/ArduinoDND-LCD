@@ -37,7 +37,7 @@ class ToolBar extends Component {
         <a className='col s10 dropdown-button dropDownBar' href='#' data-activates='dropdown1'>
           <div className='row'>
             <label className='col s10 dropDownFont truncate noselect'>{this.state.portName}</label>
-            <div className='col s2 dropDownIcon noselect'>
+            <div className='col s2 dropDownIcon noselect right-align'>
               <i className='material-icons'>arrow_drop_down</i>
             </div>
           </div>
@@ -49,7 +49,7 @@ class ToolBar extends Component {
 
 
 
-        <div className='col s2'>
+        <div className='col s2 center-align'>
           <div className='btn waves-effect waves-light settingBtn' onClick={() => this.props.sendMessage('a-hi')}>
             <i className="material-icons noselect">settings</i>
           </div>
