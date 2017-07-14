@@ -1,5 +1,5 @@
 .title {
-  font-family: Roboto-Bold;
+  font-family: sans-serif;
   font-size: 12px;
   color: rgba(0,0,0,0.87);
   margin-left: 10px;
@@ -24,4 +24,5 @@
   text-overflow: ellipsis;
   white-space: normal;
   max-height: 100%;
+  font-family: sans-serif;
 }

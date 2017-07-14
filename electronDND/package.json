@@ -11,7 +11,7 @@
     "build": "webpack --config webpack.build.config.js",
     "package": "webpack --config webpack.build.config.js",
     "postpackage": "electron-packager ./ --out=./builds --overwrite",
-    "install": "electron-rebuild"
+    "rebuild": "electron-rebuild"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -32,11 +32,11 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "hammerjs": "^2.0.8",
+    "jquery": "^3.2.1",
     "react-redux": "^5.0.5",
     "react-scrollbar-js": "^1.0.1",
     "redux": "^3.7.1",
-    "serialport": "^5.0.0-beta7",
-    "jquery": "^3.2.1",
-    "hammerjs": "^2.0.8"
+    "serialport": "^5.0.0-beta7"
   }
 }

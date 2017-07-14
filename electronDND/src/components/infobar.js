@@ -28,8 +28,8 @@ const minimise = () => {
 const InfoBar = (props) => {
   return(
     <div className='barColor noselect' >
-      <div className='circleExit' onClick={closeWindow.bind(this)}/>
-      <div className='circleMinimise' onClick={minimise.bind(this)}/>
+      {/* <div className='circleExit' onClick={closeWindow.bind(this)}/>
+      <div className='circleMinimise' onClick={minimise.bind(this)}/> */}
       {arduinoStatus(props.status)}
     </div>
   );

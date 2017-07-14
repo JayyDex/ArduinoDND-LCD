@@ -79,6 +79,8 @@ textarea {
 .userBoxShift {
   padding-top: 6px;
   display:inline-block;
+  font-weight:bold;
+  font-family: sans-serif;
 }
 
 .shiftText {

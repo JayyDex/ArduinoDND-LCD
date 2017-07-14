@@ -1,8 +1,9 @@
 .histroylbl {
   padding-left: 5px;
-  font-family: Roboto-Bold;
   font-size: 13px;
   color: #00979D;
+  font-weight:bold;
+  font-family: sans-serif;
 }
 
 .react-scrollbar-default {
