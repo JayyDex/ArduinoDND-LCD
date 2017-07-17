@@ -8,8 +8,9 @@ import InfoBar from './infobar';
 import ToolBar from './toolbar';
 import MessageTerminal from '../containers/message_terminal';
 import HistoryList from '../containers/history_list';
-
 import Rodal from 'rodal';
+
+import ElectronJsonStorage from 'electron-json-storage';
 
 var isSameSet = function( arr1, arr2 ) {
   return  $( arr1 ).not( arr2 ).length === 0 && $( arr2 ).not( arr1 ).length === 0;
@@ -27,16 +28,16 @@ class App extends React.Component {
       ready: 0,
       portList: [],
       userList: [
-        [0, 'Zero'],
-        [1, 'One'],
-        [2, 'Two'],
-        [3, 'Three'],
-        [4, 'Four'],
-        [5, 'Five'],
-        [6, 'Six'],
-        [7, 'Seven'],
-        [8, 'Eight'],
-        [9, 'Nine'],
+        [0, ''],
+        [1, ''],
+        [2, ''],
+        [3, ''],
+        [4, ''],
+        [5, ''],
+        [6, ''],
+        [7, ''],
+        [8, ''],
+        [9, ''],
         [100, 'All'],
       ],
       visible: false,
@@ -44,6 +45,13 @@ class App extends React.Component {
 
     this.sendMessage = this.sendMessage.bind(this);
     this.performConnection = this.performConnection.bind(this);
+  }
+
+  componentWillMount() {
+    ElectronJsonStorage.get('setting', (error, data) => {
+      this.setState({userList: data});
+      console.log("Hi");
+    });
   }
 
   componentDidMount() {
@@ -123,13 +131,13 @@ class App extends React.Component {
       }
 
       return (
-        <div className="input-field col s6" key={user[0]}>
+        <div className="input-field col s6" key={`${user[0]}${user[1]}`}>
           <input placeholder="Player Name"
             ref={(input) => this['input' + user[0]] = input}
             type="text"
             defaultValue={user[1]}
           />
-          <label className='noselect'>{`LCD ${user[0]}`}</label>
+          <label className='noselect active'>{`LCD ${user[0]}`}</label>
         </div>
       )
     })
@@ -137,22 +145,24 @@ class App extends React.Component {
 
   saveChanges(event) {
     event.preventDefault();
-
+    var array = [
+      [0, this.input0.value],
+      [1, this.input1.value],
+      [2, this.input2.value],
+      [3, this.input3.value],
+      [4, this.input4.value],
+      [5, this.input5.value],
+      [6, this.input6.value],
+      [7, this.input7.value],
+      [8, this.input8.value],
+      [9, this.input9.value],
+      [100, 'All'],
+    ];
     this.setState({
-      userList: [
-        [0, this.input0.value],
-        [1, this.input1.value],
-        [2, this.input2.value],
-        [3, this.input3.value],
-        [4, this.input4.value],
-        [5, this.input5.value],
-        [6, this.input6.value],
-        [7, this.input7.value],
-        [8, this.input8.value],
-        [9, this.input9.value],
-        [100, 'All'],
-      ]
+      userList: array
     });
+
+    ElectronJsonStorage.set('setting', array);
     this.hide();
   }
 

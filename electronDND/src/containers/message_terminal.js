@@ -156,7 +156,7 @@ class MessageTerminal extends Component {
           <textarea
             placeholder={`${this.readyStatus()}`}
             id="textarea1"
-            className="materialize-textarea"
+            className="active materialize-textarea"
             value={this.state.message}
             onChange={(event) => this.handleChange(event)}
           ></textarea>
