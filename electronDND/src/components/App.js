@@ -48,10 +48,14 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    ElectronJsonStorage.get('setting', (error, data) => {
-      this.setState({userList: data});
-      console.log("Hi");
-    });
+    ElectronJsonStorage.has('setting', (error, hasKey) => {
+      if (hasKey) {
+        ElectronJsonStorage.get('setting', (error, data) => {
+          this.setState({userList: data});
+          console.log("Hi");
+        });
+      }
+    })
   }
 
   componentDidMount() {
