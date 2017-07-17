@@ -26,3 +26,14 @@ div.col.s4 {
 div.noselect.row {
   margin-top: 14px;
 }
+
+.cancelBtn {
+  position: absolute;
+  margin-top: -56px;
+  margin-left: 135px;
+}
+
+.shiftLbl2 {
+  position: absolute;
+  margin-top: -10px;
+}

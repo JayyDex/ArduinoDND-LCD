@@ -17,7 +17,6 @@ class ToolBar extends Component {
   }
 
   renderPorts() {
-    console.log(this.props.portList);
     if (this.props.portList.length == 0) {
       return(
         <li><a href="#!">Scanning for Ports...</a></li>
@@ -50,7 +49,7 @@ class ToolBar extends Component {
 
 
         <div className='col s2 center-align'>
-          <div className='btn waves-effect waves-light settingBtn' onClick={() => this.props.sendMessage('a-hi')}>
+          <div className='btn waves-effect waves-light settingBtn' onClick={this.props.show.bind(this)}>
             <i className="material-icons noselect">settings</i>
           </div>
         </div>

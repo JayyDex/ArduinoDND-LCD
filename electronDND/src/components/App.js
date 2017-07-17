@@ -1,5 +1,6 @@
 import '../assets/css/app.css';
 import '../assets/css/materialize.min.css';
+import Styles from '../assets/css/rodal.css';
 
 import SerialPort from 'serialport';
 import React, { Component } from 'react';
@@ -7,6 +8,8 @@ import InfoBar from './infobar';
 import ToolBar from './toolbar';
 import MessageTerminal from '../containers/message_terminal';
 import HistoryList from '../containers/history_list';
+
+import Rodal from 'rodal';
 
 var isSameSet = function( arr1, arr2 ) {
   return  $( arr1 ).not( arr2 ).length === 0 && $( arr2 ).not( arr1 ).length === 0;
@@ -35,7 +38,8 @@ class App extends React.Component {
         [8, 'Eight'],
         [9, 'Nine'],
         [100, 'All'],
-      ]
+      ],
+      visible: false,
     };
 
     this.sendMessage = this.sendMessage.bind(this);
@@ -104,6 +108,54 @@ class App extends React.Component {
     }.bind(this), 30000);
   }
 
+  show() {
+    this.setState({ visible: true });
+  }
+
+  hide() {
+    this.setState({ visible: false });
+  }
+
+  renderUser() {
+    return this.state.userList.map((user) => {
+      if(user[0] == 100) {
+        return;
+      }
+
+      return (
+        <div className="input-field col s6" key={user[0]}>
+          <input placeholder="Player Name"
+            ref={(input) => this['input' + user[0]] = input}
+            type="text"
+            defaultValue={user[1]}
+          />
+          <label className='noselect'>{`LCD ${user[0]}`}</label>
+        </div>
+      )
+    })
+  }
+
+  saveChanges(event) {
+    event.preventDefault();
+
+    this.setState({
+      userList: [
+        [0, this.input0.value],
+        [1, this.input1.value],
+        [2, this.input2.value],
+        [3, this.input3.value],
+        [4, this.input4.value],
+        [5, this.input5.value],
+        [6, this.input6.value],
+        [7, this.input7.value],
+        [8, this.input8.value],
+        [9, this.input9.value],
+        [100, 'All'],
+      ]
+    });
+    this.hide();
+  }
+
   render() {
     return (
       <div>
@@ -114,6 +166,7 @@ class App extends React.Component {
               performConnection={this.performConnection}
               portList={this.state.portList}
               sendMessage={this.sendMessage}
+              show={this.show.bind(this)}
             />
             <MessageTerminal
               ready={this.state.ready}
@@ -127,6 +180,24 @@ class App extends React.Component {
           {/* <div className="col s4 secondPanel">6-columns (one-half)</div> */}
 
         </div>
+        <Rodal
+          visible={this.state.visible}
+          customStyles={Styles}
+          onClose={this.hide.bind(this)}
+          height={500}
+        >
+            <h6 className='noselect'>LCD Assignment</h6>
+            <form className='row' onSubmit={this.saveChanges.bind(this)}>
+              {this.renderUser()}
+
+
+              <input className='btn right noselect' type="submit" value="Submit" />
+
+
+            </form>
+            <div className='btn right cancelBtn orange noselect' onClick={() => this.hide()}>Cancel</div>
+            <label className='shiftLbl2 noselect'>*Leave Name Blank to hide LCD from option list</label>
+        </Rodal>
       </div>
     );
   }

@@ -79,10 +79,20 @@ class MessageTerminal extends Component {
     return this.props.userList.map((user) => {
       var index = this.state.checkedBox.indexOf(user[0]);
       var indexAll = this.state.checkedBox.indexOf(100);
+      var shortName = user[1];
+
+      if (shortName.length > 7) {
+        shortName = shortName.substr(0,6).trim() + '..';
+      }
+
+      if (user[1] === '') {
+        return;
+      }
+
       if (indexAll != -1 && user[0] != 100) {
         return(
           <label className="col s2 userBoxDisabled waves-effect waves-light disabled" key={user[0]} onClick={this.handleToggle.bind(this, user)}>
-            <span className="userBoxShift">{user[1]}</span>
+            <span className="userBoxShift truncate">{shortName}</span>
           </label>
         );
       }
@@ -90,14 +100,14 @@ class MessageTerminal extends Component {
       if(index != -1) {
         return(
           <label className="col s2 userBoxActive waves-effect waves-light" key={user[0]} onClick={this.handleToggle.bind(this, user)}>
-            <span className="userBoxShift">{user[1]}</span>
+            <span className="userBoxShift truncate">{shortName}</span>
           </label>
         );
       }
 
       return (
         <label className="col s2 userBox waves-effect waves-light" key={user[0]} onClick={this.handleToggle.bind(this, user)}>
-          <span className="userBoxShift">{user[1]}</span>
+          <span className="userBoxShift truncate">{shortName}</span>
         </label>
       );
     });

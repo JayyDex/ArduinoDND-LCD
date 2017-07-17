@@ -37,6 +37,7 @@
     "react-redux": "^5.0.5",
     "react-scrollbar-js": "^1.0.1",
     "redux": "^3.7.1",
+    "rodal": "^1.5.4",
     "serialport": "^5.0.0-beta7"
   }
 }
