@@ -3,7 +3,7 @@ import '../assets/css/message_terminal.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { addToHistory } from '../actions/index';
+import { addToHistory, addToQueue } from '../actions/index';
 
 class MessageTerminal extends Component {
   constructor(props) {
@@ -117,6 +117,30 @@ class MessageTerminal extends Component {
   readyMessage(val) {
     var modifiedMessage = '';
     //DEBUG SECTION
+
+    if(this.state.message === '' || this.state.checkedBox.length < 1) {
+      return;
+    }
+
+    if(val == 0) {
+      this.state.checkedBox.forEach((data) => {
+        if (data == 100) {
+          modifiedMessage = modifiedMessage.concat('a,');
+        } else {
+          modifiedMessage = modifiedMessage.concat(data);
+          modifiedMessage = modifiedMessage.concat(',');
+        }
+      })
+      modifiedMessage = modifiedMessage.substring(0, modifiedMessage.length - 1);
+      modifiedMessage = modifiedMessage.concat('-');
+      modifiedMessage = modifiedMessage.concat(this.state.message);
+      this.props.addToQueue(this.state.checkedBox, this.state.message, modifiedMessage);
+      this.setState({message: ''})
+      $('#textarea1').val(this.state.message);
+      $('#textarea1').trigger('autoresize');
+      return;
+    }
+
     if(this.state.message === '' || this.state.checkedBox.length < 1 || this.props.ready != 1 ) {
       return;
     }
@@ -138,11 +162,8 @@ class MessageTerminal extends Component {
       modifiedMessage = modifiedMessage.concat(this.state.message);
       // console.log(modifiedMessage);
       this.props.sendMessage(modifiedMessage);
-    } else {
-      //Queue Message
+      this.props.addToHistory(this.state.checkedBox, this.state.message, modifiedMessage);
     }
-
-    this.props.addToHistory(this.state.checkedBox, this.state.message, modifiedMessage);
     this.setState({message: ''})
     $('#textarea1').val(this.state.message);
     $('#textarea1').trigger('autoresize');
@@ -185,7 +206,7 @@ class MessageTerminal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ addToHistory: addToHistory }, dispatch);
+  return bindActionCreators({ addToHistory: addToHistory, addToQueue }, dispatch);
 }
 
 export default connect(null, mapDispatchToProps)(MessageTerminal);

@@ -192,7 +192,7 @@ class App extends React.Component {
             />
             <HistoryList userList={this.state.userList} sendMessage={(msg) => this.sendMessage(msg)} ready={this.state.ready}/>
           </div>
-          <QueueList />
+          <QueueList userList={this.state.userList}/>
           {/* Pop up Message */}
         </div>
         <Rodal

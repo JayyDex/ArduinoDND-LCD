@@ -4,7 +4,8 @@ import '../assets/css/queue_list.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { updateBurger } from '../actions/index';
+import { updateBurger, saveToQueue } from '../actions/index';
+import QueueDetail from '../components/queue_detail';
 
 class QueueList extends Component {
   constructor(props) {
@@ -30,9 +31,12 @@ class QueueList extends Component {
 
     return this.props.queue.all.map((item) => {
       return(
-        <div key={item}>
-          {item}
-        </div>
+        <QueueDetail
+          key={`${item.modified}${item.checked}`}
+          queue={item}
+          saveToQueue={(item) => this.props.saveToQueue(item)}
+          userList={this.props.userList}
+        />
       );
     });
   }
@@ -46,17 +50,20 @@ class QueueList extends Component {
         right
         isOpen={ this.props.queue.isOpen }
         onStateChange={(state) => this.updateState(state) }
-        Menu width={ '40%' }
+        Menu width={ '55%' }
 
       >
-        {this.renderQueue()}
+        <ul>
+          {this.renderQueue()}
+        </ul>
+
       </Menu>
     );
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateBurger }, dispatch);
+  return bindActionCreators({ updateBurger, saveToQueue }, dispatch);
 }
 
 function mapStatesToProps(state) {
