@@ -28,7 +28,7 @@
 }
 
 .boxOrange {
-  position: absolute;
+  position: relative;
   height: 30px;
   width: 30px;
   margin-left: -11px;
@@ -36,7 +36,7 @@
 }
 
 .boxGreen {
-  position: absolute;
+  position: relative;
   height: 30px;
   width: 30px;
   margin-left: -11px;
@@ -44,11 +44,10 @@
 }
 
 .titleText {
-  position: absolute;
+  position: relative;
   color: white;
   font-size: 12px;
-  margin-top: -13px;
-  width: 150px;
+  top: -44px;
   margin-left: 25px;
   white-space: nowrap;
   overflow: hidden;
@@ -56,7 +55,8 @@
 }
 
 .checkBoxQueue {
-  position: absolute;
+  position: relative;
+  top: -88px;
   margin-left: -6px;
   margin-top: -3px;
 }
@@ -73,10 +73,10 @@
 }
 
 .mainText {
-  position: absolute;
+  position: relative;
   width: 180px;
   height: 65px;
-  margin-top: 35px;
+  top: -104px;
   margin-left: -5px;
   line-height: 13px;
   overflow: hidden;

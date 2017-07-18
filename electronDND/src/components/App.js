@@ -53,7 +53,6 @@ class App extends React.Component {
       if (hasKey) {
         ElectronJsonStorage.get('setting', (error, data) => {
           this.setState({userList: data});
-          console.log("Hi");
         });
       }
     })
@@ -192,7 +191,7 @@ class App extends React.Component {
             />
             <HistoryList userList={this.state.userList} sendMessage={(msg) => this.sendMessage(msg)} ready={this.state.ready}/>
           </div>
-          <QueueList userList={this.state.userList}/>
+          <QueueList userList={this.state.userList} sendMessage={(msg) => this.sendMessage(msg)} ready={this.state.ready}/>
           {/* Pop up Message */}
         </div>
         <Rodal

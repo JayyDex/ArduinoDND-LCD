@@ -4,12 +4,24 @@ import '../assets/css/queue_list.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { updateBurger, saveToQueue } from '../actions/index';
+import ElectronJsonStorage from 'electron-json-storage';
+
+import { updateBurger, saveToQueue, removeFromQueue, preloadQueue } from '../actions/index';
 import QueueDetail from '../components/queue_detail';
 
 class QueueList extends Component {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    ElectronJsonStorage.has('queue', (error, hasKey) => {
+      if (hasKey) {
+        ElectronJsonStorage.get('queue', (error, data) => {
+          this.props.preloadQueue(data);
+        });
+      }
+    })
   }
 
   showSettings (event) {
@@ -32,10 +44,13 @@ class QueueList extends Component {
     return this.props.queue.all.map((item) => {
       return(
         <QueueDetail
-          key={`${item.modified}${item.checked}`}
+          key={`${item.modified}${item.checked}${item.raw}${item.people}`}
           queue={item}
           saveToQueue={(item) => this.props.saveToQueue(item)}
           userList={this.props.userList}
+          sendMessage={(msg) => this.props.sendMessage(msg)}
+          ready={this.props.ready}
+          removeFromQueue={(item) => this.props.removeFromQueue(item)}
         />
       );
     });
@@ -63,7 +78,7 @@ class QueueList extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateBurger, saveToQueue }, dispatch);
+  return bindActionCreators({ updateBurger, saveToQueue, removeFromQueue, preloadQueue }, dispatch);
 }
 
 function mapStatesToProps(state) {

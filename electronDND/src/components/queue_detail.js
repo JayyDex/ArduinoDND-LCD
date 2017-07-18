@@ -16,7 +16,24 @@ const UniqueLabel = (data, props) => {
   });
   UserList = UserList.substring(0, UserList.length - 1);
   UserList = UserList.substring(0, UserList.length - 1);
+
+  if (UserList.length > 26) {
+    UserList = UserList.substr(0, 26);
+    UserList = UserList.concat('...');
+  }
   return(UserList);
+}
+
+const sendMessageManage = (props) => {
+  if (props.ready != 1) {
+    console.log("Not Ready for next Msg");
+    return;
+  } else {
+    props.sendMessage(props.queue.modified);
+    if (props.queue.checked == false) {
+      props.removeFromQueue(props.queue);
+    }
+  }
 }
 
 const QueueDetail = (props) => {
@@ -43,7 +60,7 @@ const QueueDetail = (props) => {
           </label>
         </div>
       </div>
-      <button className='col s2 btn buttonQueue waves-effect waves-light' onClick={() => console.log('Send')}>
+      <button className='col s2 btn buttonQueue waves-effect waves-light' onClick={sendMessageManage.bind(this, props)}>
         <i className='material-icons absoluteShift'>keyboard_arrow_right</i>
       </button>
     </li>
