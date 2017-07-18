@@ -18,7 +18,7 @@ if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 470, height: 700, show: false
+    width: 470, height: 700, show: false //,resizable: false
   });
 
   mainWindow.setMenu(null);

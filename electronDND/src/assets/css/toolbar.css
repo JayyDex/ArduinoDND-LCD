@@ -38,3 +38,11 @@
   margin: 0px;
   border-radius: 2px;
 }
+
+.pullBtn {
+  height: 36px;
+  width: 36px;
+  padding: 0px;
+  margin-left: -15px;
+  border-radius: 2px;
+}

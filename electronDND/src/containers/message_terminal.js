@@ -172,10 +172,10 @@ class MessageTerminal extends Component {
         </div>
 
         <div className='col s12 right-align'>
-          <div className="btn queueBtn" onClick={() => this.readyMessage(0)}>
+          <div className="btn queueBtn waves-effect waves-light" onClick={() => this.readyMessage(0)}>
             QUEUE
           </div>
-          <div className="btn sendBtn" onClick={() => this.readyMessage(1)}>
+          <div className="btn sendBtn waves-effect waves-light" onClick={() => this.readyMessage(1)}>
             SEND
           </div>
         </div>

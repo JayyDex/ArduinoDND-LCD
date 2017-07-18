@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import '../assets/css/toolbar.css';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { updateBurger } from '../actions/index';
+
 
 class ToolBar extends Component {
   constructor(props) {
@@ -33,7 +38,7 @@ class ToolBar extends Component {
   render() {
     return(
       <div className='row toolBar'>
-        <a className='col s10 dropdown-button dropDownBar' href='#' data-activates='dropdown1'>
+        <a className='col s9 dropdown-button dropDownBar' href='#' data-activates='dropdown1'>
           <div className='row'>
             <label className='col s10 dropDownFont truncate noselect'>{this.state.portName}</label>
             <div className='col s2 dropDownIcon noselect right-align'>
@@ -53,9 +58,18 @@ class ToolBar extends Component {
             <i className="material-icons noselect">settings</i>
           </div>
         </div>
+        <div className='col s1'>
+          <div className='btn waves-effect waves-light pullBtn' onClick={() => this.props.updateBurger(true)}>
+            <i className="material-icons noselect">reorder</i>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-export default ToolBar;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateBurger }, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(ToolBar);

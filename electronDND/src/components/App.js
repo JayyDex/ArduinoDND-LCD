@@ -5,10 +5,11 @@ import Styles from '../assets/css/rodal.css';
 import SerialPort from 'serialport';
 import React, { Component } from 'react';
 import InfoBar from './infobar';
-import ToolBar from './toolbar';
+import ToolBar from '../containers/toolbar';
 import MessageTerminal from '../containers/message_terminal';
 import HistoryList from '../containers/history_list';
 import Rodal from 'rodal';
+import QueueList from '../containers/queue_list';
 
 import ElectronJsonStorage from 'electron-json-storage';
 
@@ -173,6 +174,8 @@ class App extends React.Component {
   render() {
     return (
       <div>
+
+        {/* Main Body */}
         <InfoBar status={this.state.status}/>
         <div className='row'>
           <div className="col s12">
@@ -189,10 +192,8 @@ class App extends React.Component {
             />
             <HistoryList userList={this.state.userList} sendMessage={(msg) => this.sendMessage(msg)} ready={this.state.ready}/>
           </div>
-
-
-          {/* <div className="col s4 secondPanel">6-columns (one-half)</div> */}
-
+          <QueueList />
+          {/* Pop up Message */}
         </div>
         <Rodal
           visible={this.state.visible}
@@ -203,11 +204,7 @@ class App extends React.Component {
             <h6 className='noselect'>LCD Assignment</h6>
             <form className='row' onSubmit={this.saveChanges.bind(this)}>
               {this.renderUser()}
-
-
               <input className='btn right noselect' type="submit" value="Submit" />
-
-
             </form>
             <div className='btn right cancelBtn orange noselect' onClick={() => this.hide()}>Cancel</div>
             <label className='shiftLbl2 noselect'>*Leave Name Blank to hide LCD from option list</label>
