@@ -626,6 +626,14 @@ div.noselect.row {
   margin: 0px;
   border-radius: 2px;
 }
+
+.pullBtn {
+  height: 36px;
+  width: 36px;
+  padding: 0px;
+  margin-left: -15px;
+  border-radius: 2px;
+}
 .shiftCount {
   font-size: 11px;
   margin-top: -20px;
@@ -767,4 +775,149 @@ textarea {
   white-space: normal;
   max-height: 100%;
   font-family: sans-serif;
+}
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #F1F1F1;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #F1F1F1;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #F1F1F1;
+  font-size: 1.15em;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #F1F1F1;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  padding: 0.8em;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+nav {
+  background-color: #F1F1F1;
+}
+
+nav a {
+  color: black;
+}
+
+.bm-menu {
+    padding-bottom: 20px;
+}
+
+nav.bm-item-list {
+  box-shadow: none;
+}
+.detailContainer {
+  height: 100px;
+  width: 100%;
+  background-color: white;
+
+  margin-bottom: 20px;
+}
+
+.buttonQueue {
+  height: 100px;
+  background-color: #00979D;
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+}
+
+.buttonQueue:hover {
+  box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+}
+
+.absoluteShift {
+  display: block;
+  margin-left: -4px;
+}
+
+.titleBar {
+  height: 30px;
+  background-color: #5B5B5B;
+}
+
+.boxOrange {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  margin-left: -11px;
+  background-color: #F47A20;
+}
+
+.boxGreen {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  margin-left: -11px;
+  background-color: #008184;
+}
+
+.titleText {
+  position: relative;
+  color: white;
+  font-size: 12px;
+  top: -44px;
+  margin-left: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkBoxQueue {
+  position: relative;
+  top: -88px;
+  margin-left: -6px;
+  margin-top: -3px;
+}
+
+.checkbox-indigo[type="checkbox"] + label:before{
+    border: 2px solid white;
+    background: transparent;
+}
+.checkbox-indigo[type="checkbox"]:checked + label:before{
+    border: 2px solid transparent;
+    border-bottom: 2px solid white;
+    border-right: 2px solid white;
+    background: transparent;
+}
+
+.mainText {
+  position: relative;
+  width: 180px;
+  height: 65px;
+  top: -104px;
+  margin-left: -5px;
+  line-height: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -40,7 +40,6 @@ class QueueList extends Component {
         </label>
       );
     }
-
     return this.props.queue.all.map((item) => {
       return(
         <QueueDetail
@@ -56,6 +55,18 @@ class QueueList extends Component {
     });
   }
 
+  clearQueue() {
+    let data = this.props.queue.all;
+    let dataCopy = [];
+    data.forEach((item) => {
+      if (item.checked == true) {
+        dataCopy.push(item);
+      }
+    })
+    let finalData = { ...this.props.queue, all: dataCopy };
+    ElectronJsonStorage.set('queue', {isOpen: false, all: dataCopy});
+    this.props.preloadQueue(finalData);
+  }
 
   render () {
     return (
@@ -65,11 +76,15 @@ class QueueList extends Component {
         right
         isOpen={ this.props.queue.isOpen }
         onStateChange={(state) => this.updateState(state) }
-        Menu width={ '55%' }
+        width={ '260px' }
 
       >
-        <ul>
+        <ul className='maxWidth'>
           {this.renderQueue()}
+          <div
+            className='btn waves-effect waves-light clearStyle noselect'
+            onClick={() => this.clearQueue()}
+            >CLEAR</div>
         </ul>
 
       </Menu>

@@ -53,9 +53,22 @@ nav a {
 }
 
 .bm-menu {
-    padding-bottom: 20px;
+    padding-bottom: 55px;
 }
 
 nav.bm-item-list {
   box-shadow: none;
+}
+
+.maxWidth {
+  max-width: 260px;
+}
+
+.clearStyle {
+  z-index:9;
+  border-radius: 0px;
+  position: absolute;
+  width: 100%;
+  bottom: 24px;
+  left: 0px;
 }
